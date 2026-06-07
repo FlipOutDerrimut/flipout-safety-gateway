@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mandatory Safety Briefing</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #1a1a1a; color: white; text-align: center; padding: 20px; }
+        .container { max-width: 640px; margin: 0 auto; }
+        #timer-box { font-size: 20px; margin-bottom: 15px; color: #ffb3b3; font-weight: bold; }
+        #timer { color: #ff4d4d; font-family: 'Courier New', Courier, monospace; font-size: 24px; }
+        .video-wrapper { position: relative; display: inline-block; margin-top: 5px; }
+        #player { border: 3px solid #ff4d4d; border-radius: 8px; max-width: 100%; }
+        #token-box { display: none; margin-top: 30px; padding: 20px; background: #2b7a43; border-radius: 8px; font-size: 24px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>⚠️ Mandatory Site Safety Induction</h2>
+    <p>You must watch this custom in-store safety video in full to unlock your shift code.</p>
+    
+    <div id="timer-box">
+        ⏳ Time Remaining: <span id="timer">Loading...</span>
+    </div>
+
+    <div class="video-wrapper">
+        <div id="player"></div>
+    </div>
+
+    <div id="token-box">
+        🎉 Shift Unlocked!<br>
+        Your Deputy Verification Code: <span id="code">{{ code }}</span>
+    </div>
+</div>
+
+<script>
+    var tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    var firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+    var player;
+    var lastCheckTime = 0;
+
+    function onYouTubeIframeAPIReady() {
+        player = new YT.Player('player', {
+            height: '360',
+            width: '640',
+            videoId: 'sjWH8J2XKas', // Your custom Flip Out video ID loaded dynamically
+            playerVars: {
+                'controls': 0,        
+                'disablekb': 1,      
+                'rel': 0,             
+                'modestbranding': 1   
+            },
+            events: {
+                'onReady': onPlayerReady,
+                'onStateChange': onPlayerStateChange
+            }
+        });
+    }
+
+    function onPlayerReady(event) {
+        setInterval(function() {
+            preventSkipping();
+            updateCountdown();
+        }, 500);
+    }
+
+    function preventSkipping() {
+        if (!player || typeof player.getCurrentTime !== 'function') return;
+        var currentTime = player.getCurrentTime();
+        
+        if (currentTime > lastCheckTime + 2) {
+            player.seekTo(lastCheckTime);
+        } else {
+            lastCheckTime = currentTime;
+        }
+    }
+
+    function updateCountdown() {
+        if (!player || typeof player.getDuration !== 'function' || typeof player.getCurrentTime !== 'function') return;
+        
+        var duration = player.getDuration();
+        var currentTime = player.getCurrentTime();
+        var timeLeft = Math.max(0, Math.floor(duration - currentTime));
+        
+        var minutes = Math.floor(timeLeft / 60);
+        var seconds = timeLeft % 60;
+        if (seconds < 10) seconds = '0' + seconds;
+        
+        if (timeLeft > 0) {
+            document.getElementById('timer').innerText = minutes + ":" + seconds;
+        } else {
+            document.getElementById('timer-box').innerHTML = "✅ Video Completed Successfully";
+        }
+    }
+
+    function onPlayerStateChange(event) {
+        if (event.data == YT.PlayerState.ENDED) {
+            document.getElementById('token-box').style.display = 'block';
+        }
+    }
+</script>
+</body>
+</html>
