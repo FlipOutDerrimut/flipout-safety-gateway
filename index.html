@@ -8,7 +8,7 @@
     <style>
         body { 
             font-family: 'Unbounded', sans-serif; 
-            background-color: #0F041D; /* Flip Out Velvet */
+            background-color: #0F041D; 
             color: #FFFFFF; 
             margin: 0; 
             min-height: 100vh; 
@@ -27,7 +27,7 @@
             width: 80%; 
             max-width: 300px; 
             border-radius: 8px; 
-            border: 2px solid #99C63E; /* Flip Out Green */
+            border: 2px solid #99C63E; 
             background: #1a0a30; 
             color: white; 
             text-align: center; 
@@ -39,7 +39,7 @@
             width: 100%; 
             max-width: 600px; 
             margin: 0 auto 20px auto; 
-            border: 4px solid #FF509F; /* Flip Out Pink */
+            border: 4px solid #FF509F; 
             border-radius: 8px; 
             background: #000; 
             overflow: hidden;
@@ -50,7 +50,7 @@
         #seconds { color: #99C63E; }
         .btn { 
             padding: 20px 40px; 
-            background-color: #99C63E; /* Flip Out Green */
+            background-color: #99C63E; 
             color: #0F041D; 
             font-weight: 800; 
             text-decoration: none; 
@@ -62,20 +62,18 @@
             font-family: inherit;
             font-size: 1.1rem;
         }
-        
-        /* Custom Branded Pop-up Modal */
         #token-modal {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 4, 29, 0.95); /* Velvet Overlay */
+            background: rgba(15, 4, 29, 0.95); 
             z-index: 9999;
             align-items: center;
             justify-content: center;
         }
         .modal-content {
             background: #1a0a30;
-            border: 4px solid #FF509F; /* Pink Border */
+            border: 4px solid #FF509F; 
             padding: 40px 20px;
             border-radius: 12px;
             text-align: center;
@@ -113,7 +111,7 @@
 
     <script src="https://www.youtube.com/iframe_api"></script>
     <script>
-        const VIDEO_DURATION_SECONDS = 243; // 4 mins 3 secs
+        const VIDEO_DURATION_SECONDS = 243; 
         let player;
         let countdownInterval;
         let timeLeft = VIDEO_DURATION_SECONDS;
@@ -155,16 +153,13 @@
                         }
                     }
                     
-                    // Trigger when video ends or timer hits 0
                     if (state === 0 || timeLeft <= 0) {
                         clearInterval(countdownInterval);
                         timerTextContainer.style.display = 'none';
                         
-                        // Immediately open modal screen to hide background interaction layout
                         document.getElementById('token-modal').style.display = 'flex';
                         
-                        // 🌐 CONNECTS TO YOUR CLOUDFLARE WORKER TO FETCH TRANSACTION-LOCKED TOKEN
-                        const workerUrl = `https://deputy-safety-trapdoor.derrimutmanager.workers.dev/generate-token?name=${encodeURIComponent(userName)}`;
+                        const workerUrl = "https://deputy-safety-trapdoor.derrimutmanager.workers.dev/generate-token";
                         
                         fetch(workerUrl)
                             .then(res => {
@@ -186,18 +181,14 @@
             }, 1000);
         }
 
-        // Executed entirely within a trusted user-touch event context
         function handleSecureCopyAndRedirect() {
             if (globalToken) {
-                // Securely write to clipboard with 100% browser authorization
                 navigator.clipboard.writeText(globalToken)
                     .then(() => {
-                        // Immediately shift app focus
                         window.location.href = "deputy://open";
                     })
                     .catch((err) => {
                         console.error("Clipboard failed: ", err);
-                        // Fallback redirect if clipboard errors out
                         window.location.href = "deputy://open";
                     });
             }
