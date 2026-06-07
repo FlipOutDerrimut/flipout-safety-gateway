@@ -6,71 +6,38 @@
     <title>Safety Gateway | Flip Out</title>
     <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;800&display=swap" rel="stylesheet">
     <style>
-        body { 
-            font-family: 'Unbounded', sans-serif; padding: 20px; 
-            background-color: #0F041D; color: #FFFFFF; 
-            margin: 0; min-height: 100vh;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-        }
-        h1 { font-weight: 800; color: #99C63E; margin-bottom: 20px; }
-        input { 
-            padding: 15px; border-radius: 8px; border: 2px solid #99C63E; 
-            width: 80%; max-width: 300px; margin-bottom: 20px;
-            background: #1a0a30; color: white; text-align: center;
-        }
-        video { 
-            width: 100%; max-width: 600px; border-radius: 8px; 
-            border: 4px solid #FF509F; background-color: #000;
-        }
-        #timer-text { color: #FF509F; font-size: 1.1rem; margin: 15px 0; }
-        #clock-in-wrapper { display: none; margin-top: 20px; text-align: center; }
-        .btn { 
-            padding: 18px 36px; background-color: #99C63E; color: #0F041D; 
-            font-weight: 800; text-decoration: none; border-radius: 8px;
-            display: inline-block; font-size: 1.1rem;
-        }
-        #token-display { font-size: 1.4rem; font-weight: 800; color: #99C63E; margin-top: 15px; }
+        body { font-family: 'Unbounded', sans-serif; background: #0F041D; color: #FFF; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; padding: 20px; }
+        h1 { color: #99C63E; margin-bottom: 20px; }
+        input { padding: 15px; border-radius: 8px; border: 2px solid #99C63E; width: 80%; max-width: 300px; margin-bottom: 20px; background: #1a0a30; color: #FFF; text-align: center; }
+        video { width: 100%; max-width: 600px; border-radius: 8px; border: 4px solid #FF509F; background: #000; }
+        #token-display { font-size: 1.5rem; font-weight: 800; color: #99C63E; margin: 20px 0; display: none; }
+        .btn { padding: 18px 36px; background: #99C63E; color: #0F041D; font-weight: 800; text-decoration: none; border-radius: 8px; display: none; }
     </style>
 </head>
 <body>
 
     <h1>SAFETY BRIEFING</h1>
-    <input type="text" id="employeeName" placeholder="Enter your first name...">
-    
-    <video id="myVideo" controls playsinline>
+    <input type="text" id="name" placeholder="Enter First Name">
+    <video id="v" controls playsinline>
         <source src="safety-video.mp4" type="video/mp4">
     </video>
-
-    <div id="timer-text">Watch video to reveal your token.</div>
     <div id="token-display"></div>
-
-    <div id="clock-in-wrapper">
-        <a href="deputy://open" class="btn">🚀 OPEN DEPUTY & CLOCK IN</a>
-    </div>
+    <a href="deputy://open" id="btn" class="btn">🚀 OPEN DEPUTY</a>
 
     <script>
-        const video = document.getElementById('myVideo');
-        const timerText = document.getElementById('timer-text');
-        const btnWrapper = document.getElementById('clock-in-wrapper');
-        const tokenDisplay = document.getElementById('token-display');
-        const nameInput = document.getElementById('employeeName');
-
-        // Automatically sync timer to video length once loaded
-        video.onloadedmetadata = () => {
-            console.log("Video duration: " + video.duration);
-        };
-
-        video.addEventListener('ended', () => {
-            timerText.style.display = 'none';
-            btnWrapper.style.display = 'block';
+        const v = document.getElementById('v'), btn = document.getElementById('btn'), disp = document.getElementById('token-display');
+        v.onended = () => {
+            const n = document.getElementById('name').value.toUpperCase().replace(/[^A-Z]/g, '') || "GUEST";
+            const id = (n + "XYZ").substring(0, 3);
+            const d = new Date(), date = (d.getDate() + "").padStart(2, '0') + (d.getMonth() + 1 + "").padStart(2, '0');
+            const token = `FO-${id}-${date}`;
             
-            // Generate Token
-            const name = nameInput.value.toUpperCase().replace(/[^A-Z]/g, '') || "GUEST";
-            const identifier = (name + "XYZ").substring(0, 3);
-            const d = new Date();
-            const dateStr = (d.getDate() + "").padStart(2, '0') + (d.getMonth() + 1 + "").padStart(2, '0');
-            tokenDisplay.textContent = `YOUR TOKEN: FO-${identifier}-${dateStr}`;
-        });
+            disp.textContent = `TOKEN: ${token}`;
+            disp.style.display = 'block';
+            btn.style.display = 'block';
+            navigator.clipboard.writeText(token);
+            window.location.href = "deputy://open";
+        };
     </script>
 </body>
 </html>
