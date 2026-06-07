@@ -44,33 +44,39 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            font-size: 28px; 
+            font-size: 24px; 
             font-weight: bold; 
             box-sizing: border-box;
             padding: 20px;
         }
         
-        /* 🔄 AUTOMATIC SMART-LANDSCAPE TAKEOVER */
+        /* 🔄 BULLETPROOF AUTO-LANDSCAPE MAX SCALING */
         @media (orientation: landscape) {
             #setup-ui { 
-                display: none; /* Instantly hides title and text to make room */
+                display: none; /* Clear text clutter to max out screen space */
             }
             body { 
                 padding: 0; 
                 margin: 0; 
                 background: #000; 
                 overflow: hidden;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                height: 100dvh; /* Forces phone layout to respect safari/chrome menu bars */
             }
             .video-wrapper {
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100vw;
-                height: 100vh;
+                margin: 0 auto;
                 border: none;
                 border-radius: 0;
-                margin: 0;
-                max-width: none;
+                
+                /* Math constraints: Prevents video from clipping on any phone aspect ratio */
+                width: 100vw;
+                height: 100dvh;
+                max-width: calc(100dvh * 16 / 9);
+                max-height: calc(100vw * 9 / 16);
+                aspect-ratio: 16 / 9;
             }
         }
     </style>
@@ -117,7 +123,7 @@
                 'disablekb': 1,      
                 'rel': 0,             
                 'modestbranding': 1,
-                'playsinline': 1  /* Keeps player embedded inside our secure system */
+                'playsinline': 1 
             },
             events: {
                 'onReady': onPlayerReady,
@@ -164,7 +170,6 @@
 
     function onPlayerStateChange(event) {
         if (event.data == YT.PlayerState.ENDED) {
-            /* Switch display to flex to center the unlock modal perfectly over the video */
             document.getElementById('token-box').style.display = 'flex';
         }
     }
