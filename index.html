@@ -12,11 +12,11 @@
             margin: 0; min-height: 100vh;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
-        h1 { font-weight: 800; color: #99C63E; margin-bottom: 10px; }
+        h1 { font-weight: 800; color: #99C63E; margin-bottom: 20px; }
         input { 
-            padding: 12px; border-radius: 8px; border: none; 
+            padding: 15px; border-radius: 8px; border: 2px solid #99C63E; 
             width: 80%; max-width: 300px; margin-bottom: 20px;
-            font-family: inherit; font-size: 1rem;
+            background: #1a0a30; color: white; text-align: center;
         }
         video { 
             width: 100%; max-width: 600px; border-radius: 8px; 
@@ -29,7 +29,7 @@
             font-weight: 800; text-decoration: none; border-radius: 8px;
             display: inline-block; font-size: 1.1rem;
         }
-        #token-display { font-size: 1.5rem; font-weight: 800; color: #99C63E; margin-top: 10px; }
+        #token-display { font-size: 1.4rem; font-weight: 800; color: #99C63E; margin-top: 15px; }
     </style>
 </head>
 <body>
@@ -41,7 +41,7 @@
         <source src="safety-video.mp4" type="video/mp4">
     </video>
 
-    <div id="timer-text">Watch for <span id="seconds">30</span>s to reveal your token.</div>
+    <div id="timer-text">Watch video to reveal your token.</div>
     <div id="token-display"></div>
 
     <div id="clock-in-wrapper">
@@ -49,31 +49,28 @@
     </div>
 
     <script>
-        // Timer Logic
-        let timeLeft = 30;
-        const timerDisplay = document.getElementById('seconds');
+        const video = document.getElementById('myVideo');
         const timerText = document.getElementById('timer-text');
         const btnWrapper = document.getElementById('clock-in-wrapper');
         const tokenDisplay = document.getElementById('token-display');
         const nameInput = document.getElementById('employeeName');
 
-        const countdown = setInterval(() => {
-            timeLeft--;
-            if (timeLeft > 0) {
-                timerDisplay.textContent = timeLeft;
-            } else {
-                clearInterval(countdown);
-                timerText.style.display = 'none';
-                btnWrapper.style.display = 'block';
-                
-                // Generate Token Logic
-                const name = nameInput.value.toUpperCase().replace(/[^A-Z]/g, '') || "GUEST";
-                const identifier = (name + "XYZ").substring(0, 3);
-                const d = new Date();
-                const dateStr = (d.getDate() + "").padStart(2, '0') + (d.getMonth() + 1 + "").padStart(2, '0');
-                tokenDisplay.textContent = `TOKEN: FO-${identifier}-${dateStr}`;
-            }
-        }, 1000);
+        // Automatically sync timer to video length once loaded
+        video.onloadedmetadata = () => {
+            console.log("Video duration: " + video.duration);
+        };
+
+        video.addEventListener('ended', () => {
+            timerText.style.display = 'none';
+            btnWrapper.style.display = 'block';
+            
+            // Generate Token
+            const name = nameInput.value.toUpperCase().replace(/[^A-Z]/g, '') || "GUEST";
+            const identifier = (name + "XYZ").substring(0, 3);
+            const d = new Date();
+            const dateStr = (d.getDate() + "").padStart(2, '0') + (d.getMonth() + 1 + "").padStart(2, '0');
+            tokenDisplay.textContent = `YOUR TOKEN: FO-${identifier}-${dateStr}`;
+        });
     </script>
 </body>
 </html>
