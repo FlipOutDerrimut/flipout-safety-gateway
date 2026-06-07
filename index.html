@@ -11,7 +11,42 @@
         #timer-box { font-size: 20px; margin-bottom: 15px; color: #ffb3b3; font-weight: bold; }
         #timer { color: #ff4d4d; font-family: 'Courier New', Courier, monospace; font-size: 24px; }
         
-        /* 📱 PORTRAIT VIEW VIDEO CONTAINER */
+        /* 🚪 THE GATEKEEPER SCREEN */
+        #name-screen {
+            background: #262626;
+            padding: 30px 20px;
+            border-radius: 8px;
+            border: 2px solid #ff4d4d;
+            margin-top: 40px;
+        }
+        .input-field {
+            width: 80%;
+            max-width: 300px;
+            padding: 12px;
+            font-size: 16px;
+            border-radius: 6px;
+            border: 2px solid #555;
+            background: #111;
+            color: white;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        .start-btn {
+            background: #ff4d4d;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .start-btn:hover { background: #e03d3d; }
+
+        /* 📱 PORTRAIT VIEW VIDEO CONTAINER (Hidden until name is entered) */
+        #main-gate { display: none; }
+        
         .video-wrapper { 
             position: relative; 
             width: 100%; 
@@ -50,32 +85,18 @@
             padding: 20px;
         }
         
-        /* 🔄 BULLETPROOF AUTO-LANDSCAPE MAX SCALING */
+        /* 🔄 AUTOMATIC SMART-LANDSCAPE TAKEOVER */
         @media (orientation: landscape) {
-            #setup-ui { 
-                display: none; /* Clear text clutter to max out screen space */
-            }
+            #setup-ui { display: none; }
             body { 
-                padding: 0; 
-                margin: 0; 
-                background: #000; 
-                overflow: hidden;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                height: 100vh;
-                height: 100dvh; /* Forces phone layout to respect safari/chrome menu bars */
+                padding: 0; margin: 0; background: #000; overflow: hidden;
+                display: flex; justify-content: center; align-items: center;
+                height: 100vh; height: 100dvh; 
             }
             .video-wrapper {
-                margin: 0 auto;
-                border: none;
-                border-radius: 0;
-                
-                /* Math constraints: Prevents video from clipping on any phone aspect ratio */
-                width: 100vw;
-                height: 100dvh;
-                max-width: calc(100dvh * 16 / 9);
-                max-height: calc(100vw * 9 / 16);
+                margin: 0 auto; border: none; border-radius: 0;
+                width: 100vw; height: 100dvh;
+                max-width: calc(100dvh * 16 / 9); max-height: calc(100vw * 9 / 16);
                 aspect-ratio: 16 / 9;
             }
         }
@@ -84,27 +105,40 @@
 <body>
 
 <div class="container">
-    <div id="setup-ui">
-        <h2>⚠️ Mandatory Site Safety Induction</h2>
-        <p>You must watch this custom in-store safety video in full to unlock your shift code.</p>
-        <div id="timer-box">
-            ⏳ Time Remaining: <span id="timer">Loading...</span>
-        </div>
-        <p style="font-size: 13px; color: #aaa;">💡 Tip: Turn your phone sideways to watch in full screen.</p>
+
+    <div id="name-screen">
+        <h2>⚠️ Flip Out Site Safety Induction</h2>
+        <p>Please enter your name exactly as it appears in Deputy to unlock your safety video.</p>
+        <input type="text" id="employee-name" class="input-field" placeholder="First and Last Name" autocomplete="off"><br>
+        <button class="start-btn" onclick="initializeGateway()">Unlock Video 🔓</button>
     </div>
 
-    <div class="video-wrapper">
-        <div id="player"></div>
-        
-        <div id="token-box">
-            🎉 Shift Unlocked!<br>
-            <span style="font-size: 16px; font-weight: normal; display: block; margin-top: 10px;">Your Deputy Verification Code:</span>
-            <span id="code" style="background: #1a1a1a; padding: 5px 15px; border-radius: 6px; display: inline-block; margin-top: 5px; border: 2px solid #fff;">SAFE-7729</span>
+    <div id="main-gate">
+        <div id="setup-ui">
+            <h2>⚠️ Mandatory Site Safety Induction</h2>
+            <p>You must watch this custom in-store safety video in full to unlock your shift code.</p>
+            <div id="timer-box">
+                ⏳ Time Remaining: <span id="timer">Loading...</span>
+            </div>
+            <p style="font-size: 13px; color: #aaa;">💡 Tip: Turn your phone sideways to watch in full screen.</p>
+        </div>
+
+        <div class="video-wrapper">
+            <div id="player"></div>
+            
+            <div id="token-box">
+                🎉 Shift Unlocked!<br>
+                <span id="welcome-message" style="font-size: 18px; font-weight: normal; margin-top: 5px; display: block;"></span>
+                <span style="font-size: 15px; font-weight: normal; display: block; margin-top: 15px; color: #e6ffe6;">Copy this exact code into your Deputy Clock-In question:</span>
+                <span id="code" style="background: #1a1a1a; padding: 8px 20px; border-radius: 6px; display: inline-block; margin-top: 10px; border: 2px solid #fff; font-family: monospace; font-size: 28px; letter-spacing: 1px;">GENERATING...</span>
+            </div>
         </div>
     </div>
+
 </div>
 
 <script>
+    // Load YouTube API
     var tag = document.createElement('script');
     tag.src = "https://www.youtube.com/iframe_api";
     var firstScriptTag = document.getElementsByTagName('script')[0];
@@ -112,6 +146,26 @@
 
     var player;
     var lastCheckTime = 0;
+    var employeeName = "";
+
+    // Step 1: Validate Name input and launch the system
+    function initializeGateway() {
+        var input = document.getElementById('employee-name').value.trim();
+        if (input.length < 3) {
+            alert("Please enter your full first and last name.");
+            return;
+        }
+        employeeName = input;
+        
+        // Swap out the screens
+        document.getElementById('name-screen').style.display = 'none';
+        document.getElementById('main-gate').style.display = 'block';
+        
+        // Start the video immediately
+        if (player && typeof player.playVideo === 'function') {
+            player.playVideo();
+        }
+    }
 
     function onYouTubeIframeAPIReady() {
         player = new YT.Player('player', {
@@ -170,8 +224,31 @@
 
     function onPlayerStateChange(event) {
         if (event.data == YT.PlayerState.ENDED) {
+            generateUniqueToken();
             document.getElementById('token-box').style.display = 'flex';
         }
+    }
+
+    // 🛠️ SMART CRYPTO-TOKEN GENERATOR
+    function generateUniqueToken() {
+        // Clean up name to uppercase letters only
+        var cleanName = employeeName.toUpperCase().replace(/[^A-Z]/g, '');
+        
+        // Extract up to 3 identifier characters
+        var identifier = cleanName.substring(0, 3);
+        if (identifier.length < 3) identifier = (identifier + "XYZ").substring(0, 3);
+        
+        // Grab current local day and month (DDMM)
+        var today = new Date();
+        var dd = String(today.getDate()).padStart(2, '0');
+        var mm = String(today.getMonth() + 1).padStart(2, '0'); 
+        
+        // Construct the final secure token
+        var finalToken = "FO-" + identifier + "-" + dd + mm;
+        
+        // Update the display interface
+        document.getElementById('welcome-message').innerText = "Great job, " + employeeName + "!";
+        document.getElementById('code').innerText = finalToken;
     }
 </script>
 </body>
