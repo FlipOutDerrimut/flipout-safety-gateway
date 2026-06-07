@@ -85,7 +85,7 @@
         <div id="done-ui">
             <div id="token-display"></div>
             <p style="color: #FF509F; font-weight: 700;">Token copied to clipboard!</p>
-            <a href="deputy://open" class="btn">🚀 OPEN DEPUTY</a>
+            <a href="deputy://open" class="btn" onclick="forceClipboardCopy()">🚀 OPEN DEPUTY</a>
         </div>
     </div>
 
@@ -96,8 +96,8 @@
         let countdownInterval;
         let timeLeft = VIDEO_DURATION_SECONDS;
         let userName = "";
+        let globalToken = ""; // Stores token securely for the fallback button click
 
-        // Automatically runs when the YouTube API script loads
         function onYouTubeIframeAPIReady() {
             player = new YT.Player('yt-player');
         }
@@ -110,11 +110,9 @@
             }
             userName = nameInput;
             
-            // Screen transition
             document.getElementById('lockout-page').style.display = 'none';
             document.getElementById('video-page').style.display = 'block';
             
-            // Safe auto-play try (allowed due to user click gesture)
             if (player && typeof player.playVideo === 'function') {
                 player.playVideo();
             }
@@ -126,9 +124,7 @@
             
             timerDisplay.textContent = timeLeft;
             
-            // Linked checking loop running every 1 second
             countdownInterval = setInterval(() => {
-                // YT.PlayerState.PLAYING is exactly 1
                 if (player && typeof player.getPlayerState === 'function' && player.getPlayerState() === 1) {
                     timeLeft--;
                     if (timeLeft > 0) {
@@ -147,109 +143,30 @@
                         const d = new Date();
                         const dd = (d.getDate() + "").padStart(2, '0');
                         const mm = (d.getMonth() + 1 + "").padStart(2, '0');
-                        const token = `FO-${identifier}-${dd}${mm}`;
+                        globalToken = `FO-${identifier}-${dd}${mm}`;
                         
-                        tokenDisplay.textContent = `TOKEN: ${token}`;
+                        // Display token layout on screen
+                        tokenDisplay.textContent = `TOKEN: ${globalToken}`;
                         doneUi.style.display = 'block';
                         
-                        // Copy to clipboard
-                        navigator.clipboard.writeText(token).catch(err => {
-                            console.log("Clipboard blocked: ", err);
-                        });
+                        // Attempt passive copy (might be blocked by browser background security)
+                        navigator.clipboard.writeText(globalToken).catch(() => {});
                         
-                        // Direct deep link launch attempt
+                        // POP-UP PROMPT: Warns user, shows token, and pauses before trying to switch apps
+                        alert(`YOUR SAFETY TOKEN IS: ${globalToken}\n\nClick OK to copy your token and open the Deputy App.`);
+                        
+                        // Auto app redirect attempt after clicking OK on the prompt
                         window.location.href = "deputy://open";
                     }
                 }
             }, 1000);
         }
-    </script>
-</body>
-</html>        }
-        #done-ui { display: none; margin-top: 20px; }
-        #token-display { font-size: 1.8rem; font-weight: 800; color: #99C63E; margin: 15px 0; }
-    </style>
-</head>
-<body>
 
-    <div id="lockout-page">
-        <h1>SAFETY GATEWAY</h1>
-        <input type="text" id="employeeName" placeholder="Enter your first name...">
-        <br>
-        <button class="btn" onclick="startBriefing()">START BRIEFING</button>
-    </div>
-
-    <div id="video-page">
-        <div class="video-container">
-            <iframe id="yt-player" src="https://www.youtube.com/embed/sjWH8J2XKas?controls=0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-        </div>
-        
-        <div id="timer-text">Please watch for <span id="seconds">243</span> more seconds...</div>
-
-        <div id="done-ui">
-            <div id="token-display"></div>
-            <p style="color: #FF509F; font-weight: 700;">Token copied to clipboard!</p>
-            <a href="deputy://open" class="btn">🚀 OPEN DEPUTY</a>
-        </div>
-    </div>
-
-    <script>
-        // Exact video runtime: 4 minutes, 3 seconds = 243 seconds
-        const VIDEO_DURATION_SECONDS = 243; 
-
-        function startBriefing() {
-            const nameInput = document.getElementById('employeeName').value.trim();
-            if (!nameInput) { 
-                alert("Please enter your name first!"); 
-                return; 
+        // Bulletproof backup function running directly on the physical button tap
+        function forceClipboardCopy() {
+            if (globalToken) {
+                navigator.clipboard.writeText(globalToken);
             }
-            
-            // Screen transition
-            document.getElementById('lockout-page').style.display = 'none';
-            document.getElementById('video-page').style.display = 'block';
-            
-            // Setup countdown tracking
-            let timeLeft = VIDEO_DURATION_SECONDS;
-            const timerDisplay = document.getElementById('seconds');
-            const timerTextContainer = document.getElementById('timer-text');
-            const doneUi = document.getElementById('done-ui');
-            const tokenDisplay = document.getElementById('token-display');
-            
-            timerDisplay.textContent = timeLeft;
-            
-            const countdown = setInterval(() => {
-                timeLeft--;
-                if (timeLeft > 0) {
-                    timerDisplay.textContent = timeLeft;
-                } else {
-                    clearInterval(countdown);
-                    timerTextContainer.style.display = 'none';
-                    
-                    // Generate Formula: FO-[3-letter Name]-[DDMM]
-                    const cleanName = nameInput.toUpperCase().replace(/[^A-Z]/g, '') || "GUEST";
-                    let identifier = cleanName.substring(0, 3);
-                    if (identifier.length < 3) {
-                        identifier = (identifier + "XYZ").substring(0, 3);
-                    }
-                    
-                    const d = new Date();
-                    const dd = (d.getDate() + "").padStart(2, '0');
-                    const mm = (d.getMonth() + 1 + "").padStart(2, '0');
-                    const token = `FO-${identifier}-${dd}${mm}`;
-                    
-                    // Show Token info
-                    tokenDisplay.textContent = `TOKEN: ${token}`;
-                    doneUi.style.display = 'block';
-                    
-                    // Auto clipboard operation
-                    navigator.clipboard.writeText(token).catch(err => {
-                        console.log("Clipboard write blocked or failed: ", err);
-                    });
-                    
-                    // Auto app redirect attempt
-                    window.location.href = "deputy://open";
-                }
-            }, 1000);
         }
     </script>
 </body>
