@@ -96,7 +96,7 @@
         let countdownInterval;
         let timeLeft = VIDEO_DURATION_SECONDS;
         let userName = "";
-        let globalToken = ""; // Stores token securely for the fallback button click
+        let globalToken = ""; 
 
         function onYouTubeIframeAPIReady() {
             player = new YT.Player('yt-player');
@@ -125,11 +125,19 @@
             timerDisplay.textContent = timeLeft;
             
             countdownInterval = setInterval(() => {
-                if (player && typeof player.getPlayerState === 'function' && player.getPlayerState() === 1) {
-                    timeLeft--;
-                    if (timeLeft > 0) {
-                        timerDisplay.textContent = timeLeft;
-                    } else {
+                if (player && typeof player.getPlayerState === 'function') {
+                    const state = player.getPlayerState();
+                    
+                    // 1. Ticks down if video is actively playing
+                    if (state === 1) {
+                        timeLeft--;
+                        if (timeLeft > 0) {
+                            timerDisplay.textContent = timeLeft;
+                        }
+                    }
+                    
+                    // 2. BUG FIX: Trigger immediately if video finishes (state 0) OR timer runs out
+                    if (state === 0 || timeLeft <= 0) {
                         clearInterval(countdownInterval);
                         timerTextContainer.style.display = 'none';
                         
@@ -145,24 +153,24 @@
                         const mm = (d.getMonth() + 1 + "").padStart(2, '0');
                         globalToken = `FO-${identifier}-${dd}${mm}`;
                         
-                        // Display token layout on screen
+                        // Display token layout
                         tokenDisplay.textContent = `TOKEN: ${globalToken}`;
                         doneUi.style.display = 'block';
                         
-                        // Attempt passive copy (might be blocked by browser background security)
+                        // Clipboard passive execution
                         navigator.clipboard.writeText(globalToken).catch(() => {});
                         
-                        // POP-UP PROMPT: Warns user, shows token, and pauses before trying to switch apps
+                        // Force execution via pop-up wrapper
                         alert(`YOUR SAFETY TOKEN IS: ${globalToken}\n\nClick OK to copy your token and open the Deputy App.`);
                         
-                        // Auto app redirect attempt after clicking OK on the prompt
+                        // Deep link jump execution
                         window.location.href = "deputy://open";
                     }
                 }
             }, 1000);
         }
 
-        // Bulletproof backup function running directly on the physical button tap
+        // Physical tap clipboard capture fallback
         function forceClipboardCopy() {
             if (globalToken) {
                 navigator.clipboard.writeText(globalToken);
