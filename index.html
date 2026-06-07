@@ -105,9 +105,9 @@
     <div id="token-modal">
         <div class="modal-content">
             <h2 style="color: #FFFFFF; margin: 0; font-size: 1.4rem;">BRIEFING COMPLETE</h2>
-            <div id="token-display"></div>
+            <div id="token-display">LOADING SECURE CODE...</div>
             <p style="color: #FF509F; font-weight: 700; margin-bottom: 10px;">Tap below to copy your token and open Deputy!</p>
-            <button class="btn" onclick="handleSecureCopyAndRedirect()">🚀 COPY &amp; OPEN DEPUTY</button>
+            <button class="btn" onclick="handleSecureCopyAndRedirect()">🚀 COPY & OPEN DEPUTY</button>
         </div>
     </div>
 
@@ -160,21 +160,27 @@
                         clearInterval(countdownInterval);
                         timerTextContainer.style.display = 'none';
                         
-                        // Generate Token Formula
-                        const cleanName = userName.toUpperCase().replace(/[^A-Z]/g, '') || "GUEST";
-                        let identifier = cleanName.substring(0, 3);
-                        if (identifier.length < 3) {
-                            identifier = (identifier + "XYZ").substring(0, 3);
-                        }
-                        
-                        const d = new Date();
-                        const dd = (d.getDate() + "").padStart(2, '0');
-                        const mm = (d.getMonth() + 1 + "").padStart(2, '0');
-                        globalToken = `FO-${identifier}-${dd}${mm}`;
-                        
-                        // Populate and show the custom tap modal
-                        document.getElementById('token-display').textContent = globalToken;
+                        // Immediately open modal screen to hide background interaction layout
                         document.getElementById('token-modal').style.display = 'flex';
+                        
+                        // 🌐 CONNECTS TO YOUR CLOUDFLARE WORKER TO FETCH TRANSACTION-LOCKED TOKEN
+                        const workerUrl = `https://deputy-safety-trapdoor.derrimutmanager.workers.dev/generate-token?name=${encodeURIComponent(userName)}`;
+                        
+                        fetch(workerUrl)
+                            .then(res => {
+                                if (!res.ok) throw new Error("Could not reach token database sync node.");
+                                return res.json();
+                            })
+                            .then(data => {
+                                globalToken = data.token;
+                                document.getElementById('token-display').textContent = globalToken;
+                            })
+                            .catch(err => {
+                                console.error("Database connection error:", err);
+                                document.getElementById('token-display').style.color = "#FF509F";
+                                document.getElementById('token-display').textContent = "SYNC ERROR";
+                                alert("System Sync Error: Unable to fetch security token. Please check internet access and try again.");
+                            });
                     }
                 }
             }, 1000);
