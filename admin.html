@@ -1,57 +1,61 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-AU">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Deputy Safety Trapdoor - Admin Panel</title>
+  <title>Safety Portal Administrative Dashboard</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-    body { background-color: #f8fafc; color: #334155; padding: 40px 20px; }
-    .container { max-width: 1000px; margin: 0 auto; }
+    body { background-color: #0f172a; color: #f1f5f9; padding: 40px 20px; min-height: 100vh; display: flex; justify-content: center; }
+    .container { width: 100%; max-width: 950px; }
     
-    /* Typography */
-    h1 { font-size: 28px; color: #0f172a; margin-bottom: 6px; font-weight: 700; }
-    .subtitle { color: #64748b; margin-bottom: 32px; font-size: 15px; }
-    h2 { font-size: 18px; color: #1e293b; margin-bottom: 20px; font-weight: 600; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; }
+    /* Portal Title Formatting */
+    h1 { font-size: 26px; color: #ffffff; margin-bottom: 4px; font-weight: 700; letter-spacing: -0.5px; }
+    .subtitle { color: #94a3b8; margin-bottom: 32px; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
+    h2 { font-size: 18px; color: #ffffff; margin-bottom: 20px; font-weight: 600; padding-bottom: 10px; border-bottom: 1px solid #334155; }
     
-    /* Standard Layout Cards */
-    .card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 24px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    /* Original Sleek Portal Containers */
+    .card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 28px; margin-bottom: 24px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
     
-    /* Forms & Inputs */
-    .form-group { margin-bottom: 18px; }
-    label { display: block; color: #475569; margin-bottom: 6px; font-size: 14px; font-weight: 500; }
-    input { width: 100%; padding: 10px 14px; background-color: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; color: #0f172a; font-size: 14px; transition: border-color 0.15s; }
-    input:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+    /* Input & Label Fields */
+    .form-group { margin-bottom: 20px; }
+    label { display: block; color: #cbd5e1; margin-bottom: 8px; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+    input { width: 100%; padding: 12px 16px; background-color: #0f172a; border: 1px solid #475569; border-radius: 8px; color: #ffffff; font-size: 14px; transition: all 0.2s; }
+    input:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); }
     
-    /* Control Action Buttons */
-    button { background-color: #2563eb; color: #ffffff; padding: 10px 18px; border: 1px solid transparent; border-radius: 6px; font-weight: 500; font-size: 14px; cursor: pointer; transition: background-color 0.15s; }
-    button:hover { background-color: #1d4ed8; }
-    button.btn-pause { background-color: #ea580c; color: #ffffff; }
-    button.btn-pause:hover { background-color: #c2410c; }
-    button.btn-resume { background-color: #16a34a; color: #ffffff; }
-    button.btn-resume:hover { background-color: #15803d; }
-    button.btn-delete { background-color: #dc2626; color: #ffffff; }
-    button.btn-delete:hover { background-color: #b91c1c; }
+    /* Action & Administration Buttons */
+    button { background-color: #3b82f6; color: #ffffff; padding: 12px 22px; border: none; border-radius: 8px; font-weight: 600; font-size: 14px; cursor: pointer; transition: all 0.15s ease-in-out; }
+    button:hover { background-color: #2563eb; transform: translateY(-1px); }
+    button:active { transform: translateY(0); }
     
-    /* Monitored Venues Table */
-    table { width: 100%; border-collapse: collapse; margin-top: 8px; }
-    th, td { text-align: left; padding: 12px 16px; border-bottom: 1px solid #e2e8f0; font-size: 14px; }
-    th { color: #64748b; font-weight: 600; background-color: #f8fafc; font-size: 13px; }
-    tr:hover td { background-color: #f8fafc; }
+    /* Restored Action Controls */
+    button.btn-pause { background-color: #f97316; color: #ffffff; }
+    button.btn-pause:hover { background-color: #ea580c; }
+    button.btn-resume { background-color: #10b981; color: #ffffff; }
+    button.btn-resume:hover { background-color: #059669; }
+    button.btn-delete { background-color: #ef4444; color: #ffffff; }
+    button.btn-delete:hover { background-color: #dc2626; }
     
-    /* Status Badges */
-    .badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 500; display: inline-block; }
-    .badge-active { background-color: #dcfce7; color: #166534; }
-    .badge-paused { background-color: #ffedd5; color: #9a3412; }
+    /* Layout Table Design */
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { text-align: left; padding: 14px 18px; border-bottom: 1px solid #334155; font-size: 14px; }
+    th { color: #94a3b8; font-weight: 600; background-color: #111827; text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background-color: #243249; }
     
-    .actions-column { display: flex; gap: 8px; }
+    /* Status Indicators */
+    .badge { padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; display: inline-block; }
+    .badge-active { background-color: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .badge-paused { background-color: rgba(249, 115, 22, 0.15); color: #fb923c; border: 1px solid rgba(249, 115, 22, 0.3); }
     
-    /* Instructions & Instructions Block */
-    .instructions-block { background-color: #f1f5f9; border-radius: 6px; padding: 16px; margin-top: 12px; font-size: 14px; border-left: 4px solid #64748b; }
-    .instructions-block ol { padding-left: 20px; margin-top: 8px; }
-    .instructions-block li { margin-bottom: 6px; line-height: 1.5; color: #475569; }
-    .instructions-block strong { color: #0f172a; }
-    .code-snippet { background: #e2e8f0; color: #0f172a; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 13px; }
+    .actions-container { display: flex; gap: 10px; }
+    
+    /* Native Informational Guide Blocks */
+    .guide-box { background-color: #111827; border-radius: 8px; padding: 20px; margin-top: 16px; border-left: 4px solid #4b5563; }
+    .guide-box ol { padding-left: 20px; margin-top: 10px; }
+    .guide-box li { margin-bottom: 8px; line-height: 1.5; color: #cbd5e1; font-size: 14px; }
+    .guide-box strong { color: #ffffff; }
+    .code-tag { background: #334155; color: #3b82f6; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 13px; font-weight: 600; }
   </style>
 </head>
 <body>
@@ -61,46 +65,46 @@
     <div class="subtitle">Administrative Management Dashboard</div>
 
     <div class="card">
-      <h2>Master Authorization Key</h2>
+      <h2>Master Authorisation Credentials</h2>
       <div class="form-group">
         <label for="adminPassword">Master System Secret Key</label>
-        <input type="password" id="adminPassword" placeholder="Enter secure authentication key to unlock infrastructure controls">
+        <input type="password" id="adminPassword" placeholder="Enter secure authentication key to unlock system changes">
       </div>
     </div>
 
     <div class="card">
-      <h2>Provision New Venue Location</h2>
+      <h2>Initialise New Venue Location</h2>
       <form id="venueForm">
         <div class="form-group">
-          <label for="venueId">Venue Distinct Code / ID</label>
-          <input type="text" id="venueId" required placeholder="e.g., flipout-derrimut">
+          <label for="venueId">Venue Custom Code / ID</label>
+          <input type="text" id="venueId" required placeholder="e.g. flipout-derrimut">
         </div>
         <div class="form-group">
           <label for="venueName">Display Name</label>
-          <input type="text" id="venueName" required placeholder="e.g., Flip Out Derrimut">
+          <input type="text" id="venueName" required placeholder="e.g. Flip Out Derrimut">
         </div>
         <div class="form-group">
           <label for="venueSubdomain">Deputy Subdomain Address</label>
-          <input type="text" id="venueSubdomain" required placeholder="e.g., company.au.deputy.com">
+          <input type="text" id="venueSubdomain" required placeholder="company.au.deputy.com">
         </div>
         <div class="form-group">
           <label for="venueToken">Permanent OAuth Access Token</label>
-          <input type="password" id="venueToken" required placeholder="Enter Permanent OAuth Access Token">
+          <input type="password" id="venueToken" required placeholder="Paste permanent application access token string">
         </div>
         
-        <div class="instructions-block">
-          <strong>How to locate your Permanent Access Token inside Deputy natively:</strong>
+        <div class="guide-box">
+          <strong>Steps to locate your Access Token natively inside the Deputy interface:</strong>
           <ol>
-            <li>Log into your <strong>Deputy Administrator</strong> account.</li>
-            <li>Click your <strong>Profile Name / Avatar</strong> in the top-right corner of the screen.</li>
-            <li>Select <strong>System Settings</strong> from the dropdown menu.</li>
-            <li>Click on <strong>Integrations</strong> located in the left sidebar menu.</li>
-            <li>Select <strong>Developer Applications</strong> from the primary grid options.</li>
-            <li>Click <strong>New Application</strong>, type a name (e.g., <code>Safety Trapdoor</code>), and click Save to generate your token.</li>
+            <li>Log into your primary <strong>Deputy Administrator</strong> account.</li>
+            <li>Click your <strong>Profile Initials / Avatar</strong> in the top right corner of the screen.</li>
+            <li>Select <strong>System Settings</strong> from the dropdown menu selections.</li>
+            <li>Click on <strong>Integrations</strong> located within the left-hand sidebar workspace panel.</li>
+            <li>Select the <strong>Developer Applications</strong> option grid.</li>
+            <li>Click <strong>New Application</strong>, define a name (such as <code>Safety Trapdoor</code>), and click Save to retrieve your permanent access token string.</li>
           </ol>
         </div>
         <br>
-        <button type="submit">Initialize & Register Venue</button>
+        <button type="submit">Initialise & Register Venue</button>
       </form>
     </div>
 
@@ -109,8 +113,8 @@
       <table>
         <thead>
           <tr>
-            <th>Venue Name</th>
-            <th>Deputy Subdomain</th>
+            <th>Venue Location Name</th>
+            <th>Deputy Subdomain Target</th>
             <th>Protection Status</th>
             <th>Administrative Actions</th>
           </tr>
@@ -118,9 +122,9 @@
         <tbody id="venuesTableBody"></tbody>
       </table>
 
-      <div class="instructions-block" style="margin-top: 30px; border-left-color: #2563eb;">
+      <div class="guide-box" style="margin-top: 32px; border-left-color: #3b82f6;">
         <strong>Manual Webhook Fallback Steps:</strong><br>
-        If the auto-provisioning step encounters a permission roadblock, verify it manually inside Deputy under <strong>System Settings</strong> > <strong>Integrations</strong> > <strong>Webhooks</strong>. Ensure a target rule is active mapping the <span class="code-snippet">Timesheet.Insert</span> trigger event to: <span class="code-snippet" id="displayWebhookUrl">https://.../webhook</span>
+        If automated synchronisation is restricted by your system profile rules, confirm the hook definition manually within Deputy under <strong>System Settings</strong> > <strong>Integrations</strong> > <strong>Webhooks</strong>. Verify an active webhook maps the <span class="code-tag">Timesheet.Insert</span> event trigger directly to: <span class="code-tag" id="displayWebhookUrl">https://.../webhook</span>
       </div>
     </div>
 
@@ -128,6 +132,7 @@
 
   <script>
     const baseUrl = window.location.origin;
+
     document.getElementById('displayWebhookUrl').textContent = `${baseUrl}/webhook`;
 
     async function loadVenues() {
@@ -138,14 +143,13 @@
         tbody.innerHTML = '';
         
         if (venues.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#94a3b8; padding: 24px;">No live monitored environments found.</td></tr>`;
+          tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#94a3b8; padding: 24px;">No active monitored franchise locations found.</td></tr>`;
           return;
         }
 
         venues.forEach(v => {
           const row = document.createElement('tr');
           
-          // Determine the correct state values for buttons and text strings
           const statusBadge = v.paused 
             ? `<span class="badge badge-paused">Bypassed (Paused)</span>` 
             : `<span class="badge badge-active">Active & Enforcing</span>`;
@@ -155,11 +159,11 @@
             : `<button class="btn-pause" onclick="togglePauseVenue('${v.id}')">Pause</button>`;
 
           row.innerHTML = `
-            <td><strong>${v.name}</strong></td>
-            <td style="font-family: monospace; color: #475569;">${v.subdomain}</td>
+            <td><strong style="color: #ffffff;">${v.name}</strong></td>
+            <td style="font-family:monospace; color:#cbd5e1;">${v.subdomain}</td>
             <td>${statusBadge}</td>
             <td>
-              <div class="actions-column">
+              <div class="actions-container">
                 ${pauseButton}
                 <button class="btn-delete" onclick="deleteVenue('${v.id}')">Delete</button>
               </div>
@@ -181,7 +185,7 @@
       const adminSecret = document.getElementById('adminPassword').value.trim();
 
       if (!adminSecret) {
-        alert('Please enter your Master System Secret Key before authorizing changes.');
+        alert('Please enter your Master System Secret Key before authorising changes.');
         return;
       }
 
@@ -232,211 +236,8 @@
         return;
       }
 
-      if (!confirm('Are you completely sure you want to delete this venue mapping configuration? Active monitoring will stop immediately.')) return;
+      if (!confirm('Are you completely sure you want to remove this venue mapping configuration? Active monitoring will stop immediately.')) return;
       
-      try {
-        const response = await fetch(`${baseUrl}/api/admin/delete-venue`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${adminSecret}`
-          },
-          body: JSON.stringify({ id })
-        });
-        if (!response.ok) throw new Error('Failed to delete active venue entry mapping fields.');
-        loadVenues();
-      } catch (err) {
-        alert(err.message);
-      }
-    }
-
-    // Initialize layout sync execution path
-    loadVenues();
-  </script>
-</body>
-</html>  </style>
-</head>
-<body>
-
-  <div class="container">
-    <h1>Flip Out <span>Safety Gateway Control Panel</span></h1>
-
-    <div class="card accent-border">
-      <h2>Master Authorization</h2>
-      <div class="form-group">
-        <label for="adminPassword">Master System Secret Key</label>
-        <input type="password" id="adminPassword" placeholder="Enter secure authentication key to unlock infrastructure updates">
-      </div>
-    </div>
-
-    <div class="card">
-      <h2>Provision New Franchise Location</h2>
-      <form id="venueForm">
-        <div class="form-group">
-          <label for="venueId">Venue Distinct Code / ID</label>
-          <input type="text" id="venueId" required placeholder="e.g. flipout-derrimut">
-        </div>
-        <div class="form-group">
-          <label for="venueName">Display Name</label>
-          <input type="text" id="venueName" required placeholder="e.g. Flip Out Derrimut">
-        </div>
-        <div class="form-group">
-          <label for="venueSubdomain">Deputy Subdomain Address</label>
-          <input type="text" id="venueSubdomain" required placeholder="company.au.deputy.com">
-        </div>
-        <div class="form-group">
-          <label for="venueToken">
-            Permanent OAuth Access Token
-            <span class="help-tooltip">?
-              <span class="tooltip-text">
-                <strong>Locating Your Access Token natively:</strong><br>
-                1. Click your <strong>Profile Icon/Initials</strong> in the top right of Deputy.<br>
-                2. Select <strong>System Settings</strong> from the dropdown.<br>
-                3. Choose <strong>Integrations</strong> from the menu workspace panel.<br>
-                4. Select <strong>Developer Applications</strong>.<br>
-                5. Add a app rule named 'Safety Trapdoor' and pull your permanent token key string.
-              </span>
-            </span>
-          </label>
-          <input type="password" id="venueToken" required placeholder="eyJ0eXAiOiJKV1QiLCJhbGciOi...">
-        </div>
-        <button type="submit">Initialize & Register Venue</button>
-      </form>
-    </div>
-
-    <div class="card">
-      <h2>Active Monitored Franchise Environments</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Venue Location Name</th>
-            <th>Subdomain Destination</th>
-            <th>Protection Gate Status</th>
-            <th>Administrative System Controls</th>
-          </tr>
-        </thead>
-        <tbody id="venuesTableBody"></tbody>
-      </table>
-
-      <div class="guide-card">
-        <div class="guide-title">
-          <span style="color: #bdff00;">⚙</span> Live System Sync Steps: Manual Webhook Mapping
-        </div>
-        <p style="color: #a1a1aa; font-size: 14px; margin-bottom: 16px; line-height: 1.5;">
-          If automation fails to deploy the webhooks directly into the partner environment due to access permission profiles, map the live event trigger manually:
-        </p>
-        <ul class="guide-step-list">
-          <li class="guide-step-item">Log into the targeted corporate workspace on **Deputy** with admin privileges.</li>
-          <li class="guide-step-item">Click your **Profile Icon** in the top right menu block and choose **System Settings**.</li>
-          <li class="guide-step-item">Open **Integrations** on the sidebar control list and select **Webhooks**.</li>
-          <li class="guide-step-item">Ensure a payload target entry is registered pointing to: <span class="code-badge" id="displayWebhookUrl">https://.../webhook</span></li>
-          <li class="guide-step-item">If absent, select **New Webhook**, assign the trigger behavior event rule type to <strong>Timesheet.Insert</strong>, paste the endpoint target link string, and save changes.</li>
-        </ul>
-      </div>
-    </div>
-
-  </div>
-
-  <script>
-    const baseUrl = window.location.origin;
-
-    document.getElementById('displayWebhookUrl').textContent = `${baseUrl}/webhook`;
-
-    async function loadVenues() {
-      try {
-        const response = await fetch(`${baseUrl}/api/venues`);
-        const venues = await response.json();
-        const tbody = document.getElementById('venuesTableBody');
-        tbody.innerHTML = '';
-        
-        if (venues.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#71717a; padding: 20px;">No live monitored franchise locations active.</td></tr>`;
-          return;
-        }
-
-        venues.forEach(v => {
-          const row = document.createElement('tr');
-          row.innerHTML = `
-            <td><strong style="color: #ffffff;">${v.name}</strong></td>
-            <td style="font-family:monospace; color:#a1a1aa;">${v.subdomain}</td>
-            <td>
-              <span class="badge ${v.paused ? 'badge-warning' : 'badge-success'}">
-                ${v.paused ? 'Bypassed (Paused)' : 'Enforcing Gateway'}
-              </span>
-            </td>
-            <td class="actions-cell">
-              <button class="btn-secondary" onclick="togglePauseVenue('${v.id}')">${v.paused ? 'Resume' : 'Pause'}</button>
-              <button class="btn-danger" onclick="deleteVenue('${v.id}')">Remove</button>
-            </td>
-          `;
-          tbody.appendChild(row);
-        });
-      } catch (err) {
-        console.error('Failure retrieving configurations:', err);
-      }
-    }
-
-    document.getElementById('venueForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const id = document.getElementById('venueId').value.trim();
-      const name = document.getElementById('venueName').value.trim();
-      const subdomain = document.getElementById('venueSubdomain').value.trim();
-      const token = document.getElementById('venueToken').value.trim();
-      const adminSecret = document.getElementById('adminPassword').value.trim();
-
-      if (!adminSecret) {
-        alert('Please enter your Master System Secret Key before authorizing changes.');
-        return;
-      }
-
-      try {
-        const response = await fetch(`${baseUrl}/api/admin/save-venue`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${adminSecret}`
-          },
-          body: JSON.stringify({ id, name, subdomain, token })
-        });
-        if (!response.ok) throw new Error(await response.text());
-        document.getElementById('venueForm').reset();
-        loadVenues();
-      } catch (err) {
-        alert('Provisioning layout failed: ' + err.message);
-      }
-    });
-
-    async function togglePauseVenue(id) {
-      const adminSecret = document.getElementById('adminPassword').value.trim();
-      if (!adminSecret) {
-        alert('Please enter your Master System Secret Key to alter enforcement states.');
-        return;
-      }
-
-      try {
-        const response = await fetch(`${baseUrl}/api/admin/toggle-pause-venue`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${adminSecret}`
-          },
-          body: JSON.stringify({ id })
-        });
-        if (!response.ok) throw new Error('Failed to toggle gateway bypass configuration rules.');
-        loadVenues();
-      } catch (err) {
-        alert(err.message);
-      }
-    }
-
-    async function deleteVenue(id) {
-      const adminSecret = document.getElementById('adminPassword').value.trim();
-      if (!adminSecret) {
-        alert('Please provide authorization credentials to perform context deletion actions.');
-        return;
-      }
-
-      if (!confirm('Are you entirely certain you want to remove this franchise location layout? Monitoring logs and tracking keys will clear.')) return;
       try {
         const response = await fetch(`${baseUrl}/api/admin/delete-venue`, {
           method: 'POST',
@@ -453,7 +254,7 @@
       }
     }
 
-    // Run active venue environment scan immediately upon render initialization
+    // Run active venue environment scan immediately upon initialization
     loadVenues();
   </script>
 </body>
