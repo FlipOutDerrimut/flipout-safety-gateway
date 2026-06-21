@@ -18,8 +18,7 @@
         h2 { color: #FF509F; font-size: 1.1rem; margin-top: 40px; border-bottom: 2px solid #FF509F; padding-bottom: 8px; }
         .card { background: #1a0a30; border: 2px solid #99C63E; padding: 25px; border-radius: 12px; margin-bottom: 25px; }
         
-        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
-        @media(max-width: 600px){ .form-row { grid-template-columns: 1fr; } }
+        .form-row { display: grid; grid-template-columns: 1fr; gap: 15px; margin-bottom: 15px; }
         
         label { display: block; font-size: 0.75rem; color: #99C63E; margin-bottom: 5px; font-weight: 700; }
         input { width: 100%; padding: 12px; border-radius: 6px; border: 1px solid #99C63E; background: #0f041d; color: white; box-sizing: border-box; font-family: inherit; }
@@ -48,12 +47,8 @@
             <h2>PROVISION NEW GATEWAY VENUE</h2>
             <div class="form-row" style="margin-top: 15px;">
                 <div>
-                    <label>UNIQUE LOCATION SLUG</label>
-                    <input type="text" id="vSlug" placeholder="lowercase-no-spaces">
-                </div>
-                <div>
-                    <label>LOCATION DISPLAY NAME</label>
-                    <input type="text" id="vName" placeholder="Flip Out Derrimut">
+                    <label>LOCATION NAME</label>
+                    <input type="text" id="vName" placeholder="e.g. Flip Out Derrimut">
                 </div>
             </div>
             <div class="form-row">
@@ -61,6 +56,8 @@
                     <label>DEPUTY SUBDOMAIN URL</label>
                     <input type="text" id="vSubdomain" placeholder="subdomain.au.deputy.com">
                 </div>
+            </div>
+            <div class="form-row">
                 <div>
                     <label>PERMANENT OAUTH ACCESS TOKEN</label>
                     <input type="password" id="vToken" placeholder="Paste generated token string...">
@@ -132,15 +129,16 @@
         }
 
         function saveLocation() {
+            const venueName = document.getElementById('vName').value.trim();
             const payload = {
-                id: document.getElementById('vSlug').value.trim().toLowerCase(),
-                name: document.getElementById('vName').value.trim(),
+                id: venueName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
+                name: venueName,
                 subdomain: document.getElementById('vSubdomain').value.trim(),
                 token: document.getElementById('vToken').value.trim()
             };
 
             if(!payload.id || !payload.name || !payload.subdomain || !payload.token) {
-                alert("Please fill out every single field to initialize structural configuration.");
+                alert("Please fill out every single field to initialise structural configuration.");
                 return;
             }
 
@@ -152,7 +150,6 @@
                 if(!r.ok) throw new Error("Verification profile sync failed.");
                 alert("✅ System Configuration Provisioned Successfully via Deputy Webhook API!");
                 loadVenues();
-                document.getElementById('vSlug').value = '';
                 document.getElementById('vName').value = '';
                 document.getElementById('vSubdomain').value = '';
                 document.getElementById('vToken').value = '';
