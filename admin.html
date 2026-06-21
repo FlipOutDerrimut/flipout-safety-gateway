@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-AU">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,7 +15,7 @@
         }
         .container { width: 100%; max-width: 750px; }
         h1 { font-weight: 800; color: #99C63E; font-size: 1.6rem; text-align: center; margin-bottom: 30px; }
-        h2 { color: #FF509F; font-size: 1.1rem; margin-top: 40px; border-bottom: 2px solid #FF509F; padding-bottom: 8px; }
+        h2 { color: #FF509F; font-size: 1.1rem; margin-top: 10px; border-bottom: 2px solid #FF509F; padding-bottom: 8px; text-transform: uppercase; }
         .card { background: #1a0a30; border: 2px solid #99C63E; padding: 25px; border-radius: 12px; margin-bottom: 25px; }
         
         .form-row { display: grid; grid-template-columns: 1fr; gap: 15px; margin-bottom: 15px; }
@@ -36,6 +36,14 @@
         .badge-live { background: #2b7a43; color: white; }
         .badge-paused { background: #ff9900; color: black; }
         .action-cell { display: flex; gap: 8px; justify-content: flex-start; }
+
+        .info-label-row { display: flex; align-items: center; justify-content: space-between; }
+        .help-trigger { color: #FF509F; cursor: pointer; font-size: 0.75rem; font-weight: 800; text-decoration: underline; }
+        .help-box { background: #0F041D; border: 1px dashed #FF509F; border-radius: 6px; padding: 15px; margin-top: 10px; display: none; }
+        .help-box ol, .instruction-card ol { margin: 0; padding-left: 20px; }
+        .help-box li, .instruction-card li { color: #FFFFFF; font-size: 0.75rem; line-height: 1.6; margin-bottom: 8px; font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-weight: 500; }
+        .instruction-card p { font-size: 0.75rem; line-height: 1.6; color: #FFFFFF; margin: 0 0 12px 0; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
+        .code-inline { background: #0F041D; color: #99C63E; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 0.75rem; font-weight: bold; border: 1px solid #2a1a40; }
     </style>
 </head>
 <body>
@@ -59,8 +67,24 @@
             </div>
             <div class="form-row">
                 <div>
-                    <label>PERMANENT OAUTH ACCESS TOKEN</label>
+                    <div class="info-label-row">
+                        <label>PERMANENT OAUTH ACCESS TOKEN</label>
+                        <span class="help-trigger" onclick="toggleHelpToken()">? HOW TO OBTAIN ACCESS KEY</span>
+                    </div>
                     <input type="password" id="vToken" placeholder="Paste generated token string...">
+                    
+                    <div id="tokenHelpBox" class="help-box">
+                        <ol>
+                            <li>Log inside your target Deputy Administrator platform dashboard profile.</li>
+                            <li>Navigate directly to the top-right corner viewport area and click your profile icon avatar graphics or initials panel.</li>
+                            <li>Select the System Settings option parameter text link within the dropdown context configuration selector array.</li>
+                            <li>Look towards the left-side structural portal configuration sidebar and select the Integrations entry choice.</li>
+                            <li>Locate and enter the explicit sub-menu item titled Developer Applications.</li>
+                            <li>Click the New Application layout toggle option switch block.</li>
+                            <li>Assign a unique application reference placeholder value (e.g. Safety Trapdoor Core) inside the operational label input box.</li>
+                            <li>Click the Save operational confirm block to finish extraction initialization processing routines and retrieve the direct authorization token credentials string.</li>
+                        </ol>
+                    </div>
                 </div>
             </div>
             <button class="btn btn-prime" onclick="saveLocation()" style="margin-top: 10px;">🚀 COMPLETE SET UP</button>
@@ -82,6 +106,20 @@
                 </tbody>
             </table>
         </div>
+
+        <div class="card instruction-card">
+            <h2>DEPUTY AUTOMATION WEBHOOK LINKAGE</h2>
+            <p>To ensure synchronous tracking operations across your network, follow these manual hook registration configuration actions directly within your Deputy administration workspace platform layer:</p>
+            <ol>
+                <li>Launch your target franchise profile dashboard overview page layout interface.</li>
+                <li>Enter into the System Settings module panel from your administrative dropdown account control selection route.</li>
+                <li>Locate the Integrations parameters selector option menu and proceed directly into the Webhooks control dashboard matrix grid.</li>
+                <li>Initialize a clean trigger map link routing entry option point by executing a click action on the Add Webhook layout action button element.</li>
+                <li>Modify your system trigger operational binding condition ruleset state explicitly to target the parameter value option labeled <span class="code-inline">Timesheet.Insert</span>.</li>
+                <li>Locate the destination URL configuration parameter route data box field and paste the absolute webhook tracking engine route link: <span class="code-inline" id="webhookTargetUri">https://deputy-safety-trapdoor.derrimutmanager.workers.dev/webhook</span></li>
+                <li>Confirm active setup completion tracking initialization sequences parameters updates profiles properties by saving the finalized active framework environment connection parameters maps properties block.</li>
+            </ol>
+        </div>
         
         <button class="btn" style="background:#2a1a40; color:white; font-size:0.8rem; max-width:200px; margin: 0 auto;" onclick="logout()">LOGOUT PANEL</button>
     </div>
@@ -92,6 +130,11 @@
 
         if (!token) {
             window.location.href = 'index.html';
+        }
+
+        function toggleHelpToken() {
+            const box = document.getElementById('tokenHelpBox');
+            box.style.display = box.style.display === 'block' ? 'none' : 'block';
         }
 
         function loadVenues() {
