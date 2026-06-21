@@ -3,66 +3,258 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Flip Out Safety Gateway Admin</title>
+  <title>Deputy Safety Trapdoor - Admin Panel</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { background-color: #09090b; color: #f4f4f5; padding: 40px 20px; display: flex; justify-content: center; }
-    .container { width: 100%; max-width: 950px; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    body { background-color: #f8fafc; color: #334155; padding: 40px 20px; }
+    .container { max-width: 1000px; margin: 0 auto; }
     
-    /* Brand Accent Headings */
-    h1, h2, h3 { color: #ffffff; font-weight: 800; text-transform: uppercase; letter-spacing: -0.5px; }
-    h1 { font-size: 32px; border-bottom: 2px solid #bdff00; padding-bottom: 14px; margin-bottom: 30px; display: flex; align-items: center; gap: 10px; }
-    h1 span { color: #bdff00; }
-    h2 { font-size: 18px; margin-bottom: 20px; color: #ffffff; display: flex; align-items: center; gap: 8px; }
+    /* Typography */
+    h1 { font-size: 28px; color: #0f172a; margin-bottom: 6px; font-weight: 700; }
+    .subtitle { color: #64748b; margin-bottom: 32px; font-size: 15px; }
+    h2 { font-size: 18px; color: #1e293b; margin-bottom: 20px; font-weight: 600; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; }
     
-    /* Flip Out Branded Cards */
-    .card { background-color: #121214; border: 1px solid #27272a; border-radius: 12px; padding: 28px; margin-bottom: 28px; box-shadow: 0 10px 30px -10px rgba(0,0,0,0.7); transition: border 0.2s; }
-    .card:hover { border-color: #3f3f46; }
-    .card.accent-border { border-top: 4px solid #bdff00; }
+    /* Standard Layout Cards */
+    .card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 24px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
     
-    /* Forms & Interactive Styling */
-    .form-group { margin-bottom: 20px; }
-    label { display: block; color: #a1a1aa; margin-bottom: 8px; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
-    input { width: 100%; padding: 12px 14px; background-color: #09090b; border: 1px solid #27272a; border-radius: 8px; color: #ffffff; font-size: 14px; transition: all 0.2s; }
-    input:focus { outline: none; border-color: #bdff00; box-shadow: 0 0 10px rgba(189, 255, 0, 0.15); }
+    /* Forms & Inputs */
+    .form-group { margin-bottom: 18px; }
+    label { display: block; color: #475569; margin-bottom: 6px; font-size: 14px; font-weight: 500; }
+    input { width: 100%; padding: 10px 14px; background-color: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; color: #0f172a; font-size: 14px; transition: border-color 0.15s; }
+    input:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
     
-    /* Electric Green Brand Buttons */
-    button { background-color: #bdff00; color: #000000; padding: 12px 20px; border: none; border-radius: 8px; font-weight: 700; font-size: 14px; text-transform: uppercase; cursor: pointer; transition: all 0.15s ease-in-out; letter-spacing: 0.5px; }
-    button:hover { background-color: #a8e600; transform: translateY(-1px); box-shadow: 0 4px 15px rgba(189, 255, 0, 0.3); }
-    button:active { transform: translateY(0); }
-    button.btn-secondary { background-color: #27272a; color: #f4f4f5; border: 1px solid #3f3f46; }
-    button.btn-secondary:hover { background-color: #3f3f46; color: #ffffff; box-shadow: none; }
-    button.btn-danger { background-color: #ef4444; color: #ffffff; }
-    button.btn-danger:hover { background-color: #dc2626; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3); }
+    /* Control Action Buttons */
+    button { background-color: #2563eb; color: #ffffff; padding: 10px 18px; border: 1px solid transparent; border-radius: 6px; font-weight: 500; font-size: 14px; cursor: pointer; transition: background-color 0.15s; }
+    button:hover { background-color: #1d4ed8; }
+    button.btn-pause { background-color: #ea580c; color: #ffffff; }
+    button.btn-pause:hover { background-color: #c2410c; }
+    button.btn-resume { background-color: #16a34a; color: #ffffff; }
+    button.btn-resume:hover { background-color: #15803d; }
+    button.btn-delete { background-color: #dc2626; color: #ffffff; }
+    button.btn-delete:hover { background-color: #b91c1c; }
     
-    /* Table & Status Layouts */
-    table { width: 100%; border-collapse: collapse; margin-top: 12px; }
-    th, td { text-align: left; padding: 14px 16px; border-bottom: 1px solid #27272a; font-size: 14px; }
-    th { color: #a1a1aa; font-weight: 700; text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px; background-color: #18181b; }
-    tr:last-child td { border-bottom: none; }
-    tr:hover td { background-color: #18181b; }
+    /* Monitored Venues Table */
+    table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+    th, td { text-align: left; padding: 12px 16px; border-bottom: 1px solid #e2e8f0; font-size: 14px; }
+    th { color: #64748b; font-weight: 600; background-color: #f8fafc; font-size: 13px; }
+    tr:hover td { background-color: #f8fafc; }
     
-    /* State Indicators */
-    .badge { padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 800; text-transform: uppercase; display: inline-block; letter-spacing: 0.5px; }
-    .badge-success { background-color: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3); }
-    .badge-warning { background-color: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+    /* Status Badges */
+    .badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 500; display: inline-block; }
+    .badge-active { background-color: #dcfce7; color: #166534; }
+    .badge-paused { background-color: #ffedd5; color: #9a3412; }
     
-    .actions-cell { display: flex; gap: 10px; justify-content: flex-start; }
+    .actions-column { display: flex; gap: 8px; }
     
-    /* Interactive Informative Tooltip */
-    .help-tooltip { position: relative; display: inline-block; margin-left: 6px; cursor: pointer; background: #27272a; color: #ffffff; border-radius: 50%; width: 18px; height: 18px; font-size: 11px; line-height: 18px; text-align: center; font-weight: bold; vertical-align: middle; }
-    .help-tooltip .tooltip-text { visibility: hidden; width: 320px; background-color: #18181b; color: #e4e4e7; text-align: left; border: 1px solid #3f3f46; border-radius: 8px; padding: 16px; position: absolute; z-index: 10; bottom: 135%; left: 50%; transform: translateX(-50%); opacity: 0; transition: opacity 0.2s; box-shadow: 0 15px 30px rgba(0,0,0,0.6); font-weight: normal; line-height: 1.5; text-transform: none; }
-    .help-tooltip:hover .tooltip-text { visibility: visible; opacity: 1; }
-    
-    /* Blueprint Step-by-Step Styling */
-    .guide-card { background: #09090b; border: 1px solid #27272a; border-radius: 10px; padding: 24px; margin-top: 24px; }
-    .guide-title { color: #ffffff; font-size: 15px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
-    .guide-step-list { list-style-type: none; padding: 0; margin: 0; }
-    .guide-step-item { color: #a1a1aa; font-size: 14px; margin-bottom: 12px; padding-left: 28px; position: relative; line-height: 1.5; }
-    .guide-step-item strong { color: #ffffff; }
-    .guide-step-item::before { content: "➔"; position: absolute; left: 0; color: #bdff00; font-weight: bold; }
-    .code-badge { background: #27272a; color: #bdff00; padding: 3px 8px; border-radius: 4px; font-family: monospace; font-size: 12px; border: 1px solid #3f3f46; }
+    /* Instructions & Instructions Block */
+    .instructions-block { background-color: #f1f5f9; border-radius: 6px; padding: 16px; margin-top: 12px; font-size: 14px; border-left: 4px solid #64748b; }
+    .instructions-block ol { padding-left: 20px; margin-top: 8px; }
+    .instructions-block li { margin-bottom: 6px; line-height: 1.5; color: #475569; }
+    .instructions-block strong { color: #0f172a; }
+    .code-snippet { background: #e2e8f0; color: #0f172a; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 13px; }
   </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Deputy Safety Trapdoor</h1>
+    <div class="subtitle">Administrative Management Dashboard</div>
+
+    <div class="card">
+      <h2>Master Authorization Key</h2>
+      <div class="form-group">
+        <label for="adminPassword">Master System Secret Key</label>
+        <input type="password" id="adminPassword" placeholder="Enter secure authentication key to unlock infrastructure controls">
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Provision New Venue Location</h2>
+      <form id="venueForm">
+        <div class="form-group">
+          <label for="venueId">Venue Distinct Code / ID</label>
+          <input type="text" id="venueId" required placeholder="e.g., flipout-derrimut">
+        </div>
+        <div class="form-group">
+          <label for="venueName">Display Name</label>
+          <input type="text" id="venueName" required placeholder="e.g., Flip Out Derrimut">
+        </div>
+        <div class="form-group">
+          <label for="venueSubdomain">Deputy Subdomain Address</label>
+          <input type="text" id="venueSubdomain" required placeholder="e.g., company.au.deputy.com">
+        </div>
+        <div class="form-group">
+          <label for="venueToken">Permanent OAuth Access Token</label>
+          <input type="password" id="venueToken" required placeholder="Enter Permanent OAuth Access Token">
+        </div>
+        
+        <div class="instructions-block">
+          <strong>How to locate your Permanent Access Token inside Deputy natively:</strong>
+          <ol>
+            <li>Log into your <strong>Deputy Administrator</strong> account.</li>
+            <li>Click your <strong>Profile Name / Avatar</strong> in the top-right corner of the screen.</li>
+            <li>Select <strong>System Settings</strong> from the dropdown menu.</li>
+            <li>Click on <strong>Integrations</strong> located in the left sidebar menu.</li>
+            <li>Select <strong>Developer Applications</strong> from the primary grid options.</li>
+            <li>Click <strong>New Application</strong>, type a name (e.g., <code>Safety Trapdoor</code>), and click Save to generate your token.</li>
+          </ol>
+        </div>
+        <br>
+        <button type="submit">Initialize & Register Venue</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <h2>Active Monitored Environments</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Venue Name</th>
+            <th>Deputy Subdomain</th>
+            <th>Protection Status</th>
+            <th>Administrative Actions</th>
+          </tr>
+        </thead>
+        <tbody id="venuesTableBody"></tbody>
+      </table>
+
+      <div class="instructions-block" style="margin-top: 30px; border-left-color: #2563eb;">
+        <strong>Manual Webhook Fallback Steps:</strong><br>
+        If the auto-provisioning step encounters a permission roadblock, verify it manually inside Deputy under <strong>System Settings</strong> > <strong>Integrations</strong> > <strong>Webhooks</strong>. Ensure a target rule is active mapping the <span class="code-snippet">Timesheet.Insert</span> trigger event to: <span class="code-snippet" id="displayWebhookUrl">https://.../webhook</span>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const baseUrl = window.location.origin;
+    document.getElementById('displayWebhookUrl').textContent = `${baseUrl}/webhook`;
+
+    async function loadVenues() {
+      try {
+        const response = await fetch(`${baseUrl}/api/venues`);
+        const venues = await response.json();
+        const tbody = document.getElementById('venuesTableBody');
+        tbody.innerHTML = '';
+        
+        if (venues.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#94a3b8; padding: 24px;">No live monitored environments found.</td></tr>`;
+          return;
+        }
+
+        venues.forEach(v => {
+          const row = document.createElement('tr');
+          
+          // Determine the correct state values for buttons and text strings
+          const statusBadge = v.paused 
+            ? `<span class="badge badge-paused">Bypassed (Paused)</span>` 
+            : `<span class="badge badge-active">Active & Enforcing</span>`;
+            
+          const pauseButton = v.paused 
+            ? `<button class="btn-resume" onclick="togglePauseVenue('${v.id}')">Resume</button>` 
+            : `<button class="btn-pause" onclick="togglePauseVenue('${v.id}')">Pause</button>`;
+
+          row.innerHTML = `
+            <td><strong>${v.name}</strong></td>
+            <td style="font-family: monospace; color: #475569;">${v.subdomain}</td>
+            <td>${statusBadge}</td>
+            <td>
+              <div class="actions-column">
+                ${pauseButton}
+                <button class="btn-delete" onclick="deleteVenue('${v.id}')">Delete</button>
+              </div>
+            </td>
+          `;
+          tbody.appendChild(row);
+        });
+      } catch (err) {
+        console.error('Failure retrieving configurations:', err);
+      }
+    }
+
+    document.getElementById('venueForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const id = document.getElementById('venueId').value.trim();
+      const name = document.getElementById('venueName').value.trim();
+      const subdomain = document.getElementById('venueSubdomain').value.trim();
+      const token = document.getElementById('venueToken').value.trim();
+      const adminSecret = document.getElementById('adminPassword').value.trim();
+
+      if (!adminSecret) {
+        alert('Please enter your Master System Secret Key before authorizing changes.');
+        return;
+      }
+
+      try {
+        const response = await fetch(`${baseUrl}/api/admin/save-venue`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${adminSecret}`
+          },
+          body: JSON.stringify({ id, name, subdomain, token })
+        });
+        if (!response.ok) throw new Error(await response.text());
+        document.getElementById('venueForm').reset();
+        loadVenues();
+      } catch (err) {
+        alert('Provisioning layout failed: ' + err.message);
+      }
+    });
+
+    async function togglePauseVenue(id) {
+      const adminSecret = document.getElementById('adminPassword').value.trim();
+      if (!adminSecret) {
+        alert('Please enter your Master System Secret Key to alter enforcement states.');
+        return;
+      }
+
+      try {
+        const response = await fetch(`${baseUrl}/api/admin/toggle-pause-venue`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${adminSecret}`
+          },
+          body: JSON.stringify({ id })
+        });
+        if (!response.ok) throw new Error('Failed to change venue enforcement state.');
+        loadVenues();
+      } catch (err) {
+        alert(err.message);
+      }
+    }
+
+    async function deleteVenue(id) {
+      const adminSecret = document.getElementById('adminPassword').value.trim();
+      if (!adminSecret) {
+        alert('Please provide your Master System Secret Key to perform deletion actions.');
+        return;
+      }
+
+      if (!confirm('Are you completely sure you want to delete this venue mapping configuration? Active monitoring will stop immediately.')) return;
+      
+      try {
+        const response = await fetch(`${baseUrl}/api/admin/delete-venue`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${adminSecret}`
+          },
+          body: JSON.stringify({ id })
+        });
+        if (!response.ok) throw new Error('Failed to delete active venue entry mapping fields.');
+        loadVenues();
+      } catch (err) {
+        alert(err.message);
+      }
+    }
+
+    // Initialize layout sync execution path
+    loadVenues();
+  </script>
+</body>
+</html>  </style>
 </head>
 <body>
 
