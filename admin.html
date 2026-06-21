@@ -3,76 +3,90 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Safety Trapdoor Admin Dashboard</title>
+  <title>Flip Out Safety Gateway Admin</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { background-color: #0f172a; color: #f1f5f9; padding: 40px 20px; display: flex; justify-content: center; }
-    .container { width: 100%; max-width: 900px; }
-    h1, h2, h3 { color: #ffffff; font-weight: 600; margin-bottom: 20px; }
-    h1 { font-size: 28px; border-bottom: 1px solid #334155; padding-bottom: 12px; }
-    h2 { font-size: 20px; margin-bottom: 16px; }
+    body { background-color: #09090b; color: #f4f4f5; padding: 40px 20px; display: flex; justify-content: center; }
+    .container { width: 100%; max-width: 950px; }
     
-    .card { background-color: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 24px; margin-bottom: 24px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+    /* Brand Accent Headings */
+    h1, h2, h3 { color: #ffffff; font-weight: 800; text-transform: uppercase; letter-spacing: -0.5px; }
+    h1 { font-size: 32px; border-bottom: 2px solid #bdff00; padding-bottom: 14px; margin-bottom: 30px; display: flex; align-items: center; gap: 10px; }
+    h1 span { color: #bdff00; }
+    h2 { font-size: 18px; margin-bottom: 20px; color: #ffffff; display: flex; align-items: center; gap: 8px; }
     
-    .form-group { margin-bottom: 16px; }
-    label { display: block; color: #94a3b8; margin-bottom: 6px; font-size: 14px; font-weight: 500; }
-    input { width: 100%; padding: 10px 12px; background-color: #0f172a; border: 1px solid #334155; border-radius: 6px; color: #ffffff; font-size: 14px; }
-    input:focus { outline: none; border-color: #3b82f6; }
+    /* Flip Out Branded Cards */
+    .card { background-color: #121214; border: 1px solid #27272a; border-radius: 12px; padding: 28px; margin-bottom: 28px; box-shadow: 0 10px 30px -10px rgba(0,0,0,0.7); transition: border 0.2s; }
+    .card:hover { border-color: #3f3f46; }
+    .card.accent-border { border-top: 4px solid #bdff00; }
     
-    button { background-color: #2563eb; color: white; padding: 10px 16px; border: none; border-radius: 6px; font-weight: 500; font-size: 14px; cursor: pointer; transition: background 0.15s; }
-    button:hover { background-color: #1d4ed8; }
-    button.btn-secondary { background-color: #475569; }
-    button.btn-secondary:hover { background-color: #334155; }
-    button.btn-danger { background-color: #dc2626; }
-    button.btn-danger:hover { background-color: #b91c1c; }
+    /* Forms & Interactive Styling */
+    .form-group { margin-bottom: 20px; }
+    label { display: block; color: #a1a1aa; margin-bottom: 8px; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+    input { width: 100%; padding: 12px 14px; background-color: #09090b; border: 1px solid #27272a; border-radius: 8px; color: #ffffff; font-size: 14px; transition: all 0.2s; }
+    input:focus { outline: none; border-color: #bdff00; box-shadow: 0 0 10px rgba(189, 255, 0, 0.15); }
     
+    /* Electric Green Brand Buttons */
+    button { background-color: #bdff00; color: #000000; padding: 12px 20px; border: none; border-radius: 8px; font-weight: 700; font-size: 14px; text-transform: uppercase; cursor: pointer; transition: all 0.15s ease-in-out; letter-spacing: 0.5px; }
+    button:hover { background-color: #a8e600; transform: translateY(-1px); box-shadow: 0 4px 15px rgba(189, 255, 0, 0.3); }
+    button:active { transform: translateY(0); }
+    button.btn-secondary { background-color: #27272a; color: #f4f4f5; border: 1px solid #3f3f46; }
+    button.btn-secondary:hover { background-color: #3f3f46; color: #ffffff; box-shadow: none; }
+    button.btn-danger { background-color: #ef4444; color: #ffffff; }
+    button.btn-danger:hover { background-color: #dc2626; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3); }
+    
+    /* Table & Status Layouts */
     table { width: 100%; border-collapse: collapse; margin-top: 12px; }
-    th, td { text-align: left; padding: 12px; border-bottom: 1px solid #334155; font-size: 14px; }
-    th { color: #94a3b8; font-weight: 600; background-color: #0f172a; }
-    tr:hover { background-color: #334155; }
+    th, td { text-align: left; padding: 14px 16px; border-bottom: 1px solid #27272a; font-size: 14px; }
+    th { color: #a1a1aa; font-weight: 700; text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px; background-color: #18181b; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background-color: #18181b; }
     
-    .badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 600; display: inline-block; }
-    .badge-success { background-color: #065f46; color: #34d399; }
-    .badge-warning { background-color: #7c2d12; color: #fb923c; }
+    /* State Indicators */
+    .badge { padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 800; text-transform: uppercase; display: inline-block; letter-spacing: 0.5px; }
+    .badge-success { background-color: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3); }
+    .badge-warning { background-color: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
     
-    .actions-cell { display: flex; gap: 8px; }
+    .actions-cell { display: flex; gap: 10px; justify-content: flex-start; }
     
-    .help-tooltip { position: relative; display: inline-block; margin-left: 6px; cursor: pointer; background: #475569; color: #ffffff; border-radius: 50%; width: 18px; height: 18px; font-size: 12px; line-height: 18px; text-align: center; font-weight: bold; vertical-align: middle; }
-    .help-tooltip .tooltip-text { visibility: hidden; width: 290px; background-color: #0f172a; color: #cbd5e1; text-align: left; border: 1px solid #334155; border-radius: 6px; padding: 12px; position: absolute; z-index: 10; bottom: 125%; left: 50%; transform: translateX(-50%); opacity: 0; transition: opacity 0.2s; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5); font-weight: normal; line-height: 1.4; }
+    /* Interactive Informative Tooltip */
+    .help-tooltip { position: relative; display: inline-block; margin-left: 6px; cursor: pointer; background: #27272a; color: #ffffff; border-radius: 50%; width: 18px; height: 18px; font-size: 11px; line-height: 18px; text-align: center; font-weight: bold; vertical-align: middle; }
+    .help-tooltip .tooltip-text { visibility: hidden; width: 320px; background-color: #18181b; color: #e4e4e7; text-align: left; border: 1px solid #3f3f46; border-radius: 8px; padding: 16px; position: absolute; z-index: 10; bottom: 135%; left: 50%; transform: translateX(-50%); opacity: 0; transition: opacity 0.2s; box-shadow: 0 15px 30px rgba(0,0,0,0.6); font-weight: normal; line-height: 1.5; text-transform: none; }
     .help-tooltip:hover .tooltip-text { visibility: visible; opacity: 1; }
     
-    .guide-card { background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 20px; margin-top: 24px; }
-    .guide-title { color: #ffffff; font-size: 16px; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    /* Blueprint Step-by-Step Styling */
+    .guide-card { background: #09090b; border: 1px solid #27272a; border-radius: 10px; padding: 24px; margin-top: 24px; }
+    .guide-title { color: #ffffff; font-size: 15px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
     .guide-step-list { list-style-type: none; padding: 0; margin: 0; }
-    .guide-step-item { color: #94a3b8; font-size: 14px; margin-bottom: 10px; padding-left: 24px; position: relative; }
-    .guide-step-item::before { content: "✓"; position: absolute; left: 0; color: #10b981; font-weight: bold; }
-    .code-badge { background: #2563eb; color: #ffffff; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 12px; }
+    .guide-step-item { color: #a1a1aa; font-size: 14px; margin-bottom: 12px; padding-left: 28px; position: relative; line-height: 1.5; }
+    .guide-step-item strong { color: #ffffff; }
+    .guide-step-item::before { content: "➔"; position: absolute; left: 0; color: #bdff00; font-weight: bold; }
+    .code-badge { background: #27272a; color: #bdff00; padding: 3px 8px; border-radius: 4px; font-family: monospace; font-size: 12px; border: 1px solid #3f3f46; }
   </style>
 </head>
 <body>
 
   <div class="container">
-    <h1>Safety Trapdoor Administration</h1>
-    <br>
+    <h1>Flip Out <span>Safety Gateway Control Panel</span></h1>
 
-    <div class="card">
-      <h2>Master Security Authentication</h2>
+    <div class="card accent-border">
+      <h2>Master Authorization</h2>
       <div class="form-group">
-        <label for="adminPassword">Master Administration Secret Key</label>
-        <input type="password" id="adminPassword" placeholder="Enter secret key to authorize changes">
+        <label for="adminPassword">Master System Secret Key</label>
+        <input type="password" id="adminPassword" placeholder="Enter secure authentication key to unlock infrastructure updates">
       </div>
     </div>
 
     <div class="card">
-      <h2>Provision New Venue</h2>
+      <h2>Provision New Franchise Location</h2>
       <form id="venueForm">
         <div class="form-group">
           <label for="venueId">Venue Distinct Code / ID</label>
-          <input type="text" id="venueId" required placeholder="e.g. derrimut-melbourne">
+          <input type="text" id="venueId" required placeholder="e.g. flipout-derrimut">
         </div>
         <div class="form-group">
           <label for="venueName">Display Name</label>
-          <input type="text" id="venueName" required placeholder="e.g. Derrimut Manager Melbourne">
+          <input type="text" id="venueName" required placeholder="e.g. Flip Out Derrimut">
         </div>
         <div class="form-group">
           <label for="venueSubdomain">Deputy Subdomain Address</label>
@@ -83,30 +97,30 @@
             Permanent OAuth Access Token
             <span class="help-tooltip">?
               <span class="tooltip-text">
-                <strong>How to get this token:</strong><br>
-                1. Log into Deputy as a system administrator.<br>
-                2. Change your browser URL suffix to: <br><span style="color:#60a5fa; font-family:monospace;">/exec/program/developer_apps</span><br>
-                3. Click <strong>New Application</strong>.<br>
-                4. Name it "Safety Trapdoor" and click Save.<br>
-                5. Click <strong>Get Token</strong> next to the app to extract your permanent access key.
+                <strong>Locating Your Access Token natively:</strong><br>
+                1. Click your <strong>Profile Icon/Initials</strong> in the top right of Deputy.<br>
+                2. Select <strong>System Settings</strong> from the dropdown.<br>
+                3. Choose <strong>Integrations</strong> from the menu workspace panel.<br>
+                4. Select <strong>Developer Applications</strong>.<br>
+                5. Add a app rule named 'Safety Trapdoor' and pull your permanent token key string.
               </span>
             </span>
           </label>
           <input type="password" id="venueToken" required placeholder="eyJ0eXAiOiJKV1QiLCJhbGciOi...">
         </div>
-        <button type="submit">Link & Initialize Venue</button>
+        <button type="submit">Initialize & Register Venue</button>
       </form>
     </div>
 
     <div class="card">
-      <h2>Active Monitored Locations</h2>
+      <h2>Active Monitored Franchise Environments</h2>
       <table>
         <thead>
           <tr>
-            <th>Venue Name</th>
-            <th>Subdomain Target</th>
-            <th>Protection Status</th>
-            <th>Administrative Control Actions</th>
+            <th>Venue Location Name</th>
+            <th>Subdomain Destination</th>
+            <th>Protection Gate Status</th>
+            <th>Administrative System Controls</th>
           </tr>
         </thead>
         <tbody id="venuesTableBody"></tbody>
@@ -114,16 +128,17 @@
 
       <div class="guide-card">
         <div class="guide-title">
-          <span style="color: #3b82f6;">➔</span> Next Steps: Webhook Verification Blueprint
+          <span style="color: #bdff00;">⚙</span> Live System Sync Steps: Manual Webhook Mapping
         </div>
-        <p style="color: #94a3b8; font-size: 14px; margin-bottom: 14px;">
-          While the system attempts to build webhooks programmatically, changes in Deputy security layouts can sometimes obstruct automated triggers. Use these steps to guarantee your new location is active:
+        <p style="color: #a1a1aa; font-size: 14px; margin-bottom: 16px; line-height: 1.5;">
+          If automation fails to deploy the webhooks directly into the partner environment due to access permission profiles, map the live event trigger manually:
         </p>
         <ul class="guide-step-list">
-          <li class="guide-step-item">Log directly into the newly added business profile inside <strong>Deputy</strong> using an admin account.</li>
-          <li class="guide-step-item">Navigate to <strong>Global Settings</strong> &gt; <strong>Integrations</strong> &gt; <strong>Webhooks</strong>.</li>
-          <li class="guide-step-item">Confirm that an active entry exists targeting: <span class="code-badge" id="displayWebhookUrl">https://.../webhook</span></li>
-          <li class="guide-step-item">If no webhook is present, click <strong>New Webhook</strong>, set the event topic to <span style="color:#f1f5f9; font-weight:500;">Timesheet.Insert</span>, and paste the endpoint URL above into the address target box. Save and enable it.</li>
+          <li class="guide-step-item">Log into the targeted corporate workspace on **Deputy** with admin privileges.</li>
+          <li class="guide-step-item">Click your **Profile Icon** in the top right menu block and choose **System Settings**.</li>
+          <li class="guide-step-item">Open **Integrations** on the sidebar control list and select **Webhooks**.</li>
+          <li class="guide-step-item">Ensure a payload target entry is registered pointing to: <span class="code-badge" id="displayWebhookUrl">https://.../webhook</span></li>
+          <li class="guide-step-item">If absent, select **New Webhook**, assign the trigger behavior event rule type to <strong>Timesheet.Insert</strong>, paste the endpoint target link string, and save changes.</li>
         </ul>
       </div>
     </div>
@@ -143,23 +158,23 @@
         tbody.innerHTML = '';
         
         if (venues.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#64748b;">No active venues configured.</td></tr>`;
+          tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#71717a; padding: 20px;">No live monitored franchise locations active.</td></tr>`;
           return;
         }
 
         venues.forEach(v => {
           const row = document.createElement('tr');
           row.innerHTML = `
-            <td><strong>${v.name}</strong></td>
-            <td style="font-family:monospace; color:#cbd5e1;">${v.subdomain}</td>
+            <td><strong style="color: #ffffff;">${v.name}</strong></td>
+            <td style="font-family:monospace; color:#a1a1aa;">${v.subdomain}</td>
             <td>
               <span class="badge ${v.paused ? 'badge-warning' : 'badge-success'}">
-                ${v.paused ? 'PAUSED (Bypassed)' : 'ENFORCING'}
+                ${v.paused ? 'Bypassed (Paused)' : 'Enforcing Gateway'}
               </span>
             </td>
             <td class="actions-cell">
               <button class="btn-secondary" onclick="togglePauseVenue('${v.id}')">${v.paused ? 'Resume' : 'Pause'}</button>
-              <button class="btn-danger" onclick="deleteVenue('${v.id}')">Delete</button>
+              <button class="btn-danger" onclick="deleteVenue('${v.id}')">Remove</button>
             </td>
           `;
           tbody.appendChild(row);
@@ -178,7 +193,7 @@
       const adminSecret = document.getElementById('adminPassword').value.trim();
 
       if (!adminSecret) {
-        alert('Please enter your Master Administration Secret Key at the top of the page.');
+        alert('Please enter your Master System Secret Key before authorizing changes.');
         return;
       }
 
@@ -195,14 +210,14 @@
         document.getElementById('venueForm').reset();
         loadVenues();
       } catch (err) {
-        alert('Provisioning failed: ' + err.message);
+        alert('Provisioning layout failed: ' + err.message);
       }
     });
 
     async function togglePauseVenue(id) {
       const adminSecret = document.getElementById('adminPassword').value.trim();
       if (!adminSecret) {
-        alert('Please enter your Master Administration Secret Key at the top of the page.');
+        alert('Please enter your Master System Secret Key to alter enforcement states.');
         return;
       }
 
@@ -215,7 +230,7 @@
           },
           body: JSON.stringify({ id })
         });
-        if (!response.ok) throw new Error('Failed to change toggle state.');
+        if (!response.ok) throw new Error('Failed to toggle gateway bypass configuration rules.');
         loadVenues();
       } catch (err) {
         alert(err.message);
@@ -225,11 +240,11 @@
     async function deleteVenue(id) {
       const adminSecret = document.getElementById('adminPassword').value.trim();
       if (!adminSecret) {
-        alert('Please enter your Master Administration Secret Key at the top of the page.');
+        alert('Please provide authorization credentials to perform context deletion actions.');
         return;
       }
 
-      if (!confirm('Are you certain you want to remove monitoring services for this venue location layout? This will clear KV records.')) return;
+      if (!confirm('Are you entirely certain you want to remove this franchise location layout? Monitoring logs and tracking keys will clear.')) return;
       try {
         const response = await fetch(`${baseUrl}/api/admin/delete-venue`, {
           method: 'POST',
@@ -239,14 +254,14 @@
           },
           body: JSON.stringify({ id })
         });
-        if (!response.ok) throw new Error('Failed to destroy venue context maps.');
+        if (!response.ok) throw new Error('Failed to destroy active venue registration mapping fields.');
         loadVenues();
       } catch (err) {
         alert(err.message);
       }
     }
 
-    // Load active venues immediately on startup
+    // Run active venue environment scan immediately upon render initialization
     loadVenues();
   </script>
 </body>
