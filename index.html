@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Safety Briefing | Flip Out</title>
+    <title>Safety Gateway | Flip Out</title>
     <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;800&display=swap" rel="stylesheet">
     <style>
         body { 
@@ -19,25 +19,27 @@
             padding: 20px;
             box-sizing: border-box;
         }
-        #lockout-page { text-align: center; width: 100%; max-width: 400px; }
-        #video-page { display: none; width: 100%; text-align: center; }
-        h1 { font-weight: 800; color: #99C63E; margin-bottom: 20px; }
-        input { 
+        .panel { text-align: center; width: 100%; max-width: 440px; }
+        #video-page, #admin-panel { display: none; width: 100%; text-align: center; }
+        h1 { font-weight: 800; color: #99C63E; margin-bottom: 25px; font-size: 1.5rem; line-height: 1.3; cursor: default; user-select: none; }
+        input, select { 
             padding: 15px; 
-            width: 80%; 
-            max-width: 300px; 
+            width: 100%; 
+            max-width: 340px; 
             border-radius: 8px; 
             border: 2px solid #99C63E; 
             background: #1a0a30; 
             color: white; 
             text-align: center; 
-            margin-bottom: 20px; 
+            margin-bottom: 15px; 
             font-family: inherit; 
-            font-size: 1rem;
+            font-size: 0.95rem;
+            box-sizing: border-box;
         }
+        select { text-align-last: center; cursor: pointer; }
         .video-container { 
             width: 100%; 
-            max-width: 600px; 
+            max-width: 640px; 
             margin: 0 auto 20px auto; 
             border: 4px solid #FF509F; 
             border-radius: 8px; 
@@ -49,24 +51,23 @@
         #timer-text { color: #FF509F; font-size: 1.2rem; margin-top: 15px; font-weight: 700; }
         #seconds { color: #99C63E; }
         .btn { 
-            padding: 20px 40px; 
+            padding: 18px 36px; 
             background-color: #99C63E; 
             color: #0F041D; 
             font-weight: 800; 
-            text-decoration: none; 
             border-radius: 8px; 
             display: inline-block; 
-            margin-top: 20px; 
+            margin-top: 15px; 
             cursor: pointer; 
             border: none; 
             font-family: inherit;
-            font-size: 1.1rem;
+            font-size: 1rem;
         }
-        #token-modal {
+        #consent-modal {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 4, 29, 0.95); 
+            background: rgba(15, 4, 29, 0.97); 
             z-index: 9999;
             align-items: center;
             justify-content: center;
@@ -74,124 +75,261 @@
         .modal-content {
             background: #1a0a30;
             border: 4px solid #FF509F; 
-            padding: 40px 20px;
+            padding: 35px 25px;
             border-radius: 12px;
             text-align: center;
-            width: 85%;
-            max-width: 450px;
-            box-shadow: 0 0 20px rgba(255, 80, 159, 0.3);
+            width: 90%;
+            max-width: 460px;
+            box-shadow: 0 0 25px rgba(255, 80, 159, 0.35);
         }
-        #token-display { font-size: 2rem; font-weight: 800; color: #99C63E; margin: 20px 0; }
+        .declaration-box {
+            background: #0f041d;
+            border: 1px solid #FF509F;
+            padding: 15px;
+            border-radius: 6px;
+            text-align: left;
+            font-size: 0.8rem;
+            line-height: 1.5;
+            margin: 20px 0;
+            color: #e0e0e0;
+        }
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #99C63E;
+        }
+        .checkbox-container input { width: auto; margin: 0; cursor: pointer; }
+        .admin-box { background: #1a0a30; border: 3px solid #99C63E; padding: 30px; border-radius: 12px; max-width: 460px; margin: 0 auto; text-align: left; }
+        .admin-box label { display: block; margin-top: 15px; font-size: 0.75rem; color: #FF509F; font-weight: 700; }
+        .admin-box input { text-align: left; background: #0f041d; margin-top: 5px; max-width: 100%; }
     </style>
 </head>
 <body>
 
-    <div id="lockout-page">
-        <h1>FLIP OUT SAFETY BRIEFING</h1>
-        <input type="text" id="employeeName" placeholder="Enter your first name...">
+    <div id="lockout-page" class="panel">
+        <h1 id="main-title" onclick="handleHeaderClick()">WEEKLY COMPLIANCE SYSTEM</h1>
+        <input type="text" id="firstName" placeholder="First Name">
+        <input type="text" id="lastName" placeholder="Last Name">
+        <input type="tel" id="mobile" placeholder="Mobile Phone Number">
+        <select id="venueSelect">
+            <option value="">Loading locations...</option>
+        </select>
         <br>
-        <button class="btn" onclick="startBriefing()">START BRIEFING</button>
+        <button class="btn" onclick="startBriefing()">ACCESS BRIEFING</button>
     </div>
 
     <div id="video-page">
         <div class="video-container">
-            <iframe id="yt-player" src="https://www.youtube.com/embed/sjWH8J2XKas?enablejsapi=1&controls=0&rel=0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+            <iframe id="yt-player" src="https://www.youtube.com/embed/fmnQdC7i5Dk?enablejsapi=1&controls=0&rel=0&modestbranding=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
         </div>
-        <div id="timer-text">Please watch for <span id="seconds">243</span> more seconds...</div>
+        <div id="timer-text">Weekly Briefing: <span id="seconds">368</span> seconds remaining...</div>
     </div>
 
-    <div id="token-modal">
+    <div id="admin-panel" class="panel">
+        <div class="admin-box">
+            <h2 style="color: #99C63E; text-align: center; margin-top: 0; font-size: 1.2rem;">FRANCHISE SELF-SETUP</h2>
+            
+            <label>VENUE UNIQUE SLUG (Lowercase, no spaces - e.g. derrimut)</label>
+            <input type="text" id="venueId" placeholder="e.g. derrimut">
+
+            <label>VENUE DISPLAY NAME</label>
+            <input type="text" id="venueName" placeholder="e.g. Flip Out Derrimut">
+
+            <label>DEPUTY SUBDOMAIN URL</label>
+            <input type="text" id="venueSubdomain" placeholder="e.g. flipoutderrimut.au.deputy.com">
+
+            <label>PERMANENT OAUTH ACCESS TOKEN</label>
+            <input type="password" id="venueToken" placeholder="Paste Deputy API token...">
+
+            <button class="btn" style="width: 100%;" onclick="provisionVenue()">🚀 AUTOMATE PROVISIONING</button>
+            <button class="btn" style="width: 100%; background: #FF509F; color: white;" onclick="closeAdmin()">CLOSE PANEL</button>
+        </div>
+    </div>
+
+    <div id="consent-modal">
         <div class="modal-content">
-            <h2 style="color: #FFFFFF; margin: 0; font-size: 1.4rem;">BRIEFING COMPLETE</h2>
-            <div id="token-display">LOADING SECURE CODE...</div>
-            <p style="color: #FF509F; font-weight: 700; margin-bottom: 10px;">Tap below to copy your token and open Deputy!</p>
-            <button class="btn" onclick="handleSecureCopyAndRedirect()">🚀 COPY & OPEN DEPUTY</button>
+            <h2 style="color: #FFFFFF; margin: 0; font-size: 1.3rem;">LEGAL DECLARATION</h2>
+            <div class="declaration-box">
+                I, <span id="declarantName" style="color:#99C63E; font-weight:700;"></span>, solemnly declare that I have watched the mandatory weekly workplace safety briefing video in its entirety. I understand and completely consent that this digital validation tracks my compliance signature for exactly 7 days, and that falsifying this record will trigger immediate disciplinary action.
+            </div>
+            <label class="checkbox-container">
+                <input type="checkbox" id="consentCheck"> I CONFIRM AND AGREE
+            </label>
+            <br>
+            <button class="btn" onclick="submitCompliance()">🚀 LOCK IN REGISTRATION & OPEN DEPUTY</button>
         </div>
     </div>
 
     <script src="https://www.youtube.com/iframe_api"></script>
     <script>
-        const VIDEO_DURATION_SECONDS = 243; 
+        const VIDEO_DURATION_SECONDS = 368; 
+        const BASE_WORKER_URL = "https://deputy-safety-trapdoor.derrimutmanager.workers.dev";
+        
         let player;
         let countdownInterval;
         let timeLeft = VIDEO_DURATION_SECONDS;
-        let userName = "";
-        let globalToken = ""; 
+        let formData = {};
+        let headerClicks = 0;
+        let activeAdminToken = "";
+
+        document.addEventListener("DOMContentLoaded", () => {
+            loadVenues();
+        });
+
+        function loadVenues() {
+            fetch(`${BASE_WORKER_URL}/api/venues`)
+                .then(res => res.json())
+                .then(data => {
+                    const select = document.getElementById("venueSelect");
+                    select.innerHTML = '<option value="">-- Select Your Location --</option>';
+                    data.forEach(v => {
+                        const opt = document.createElement("option");
+                        opt.value = v.id;
+                        opt.textContent = v.name;
+                        select.appendChild(opt);
+                    });
+                })
+                .catch(() => {
+                    document.getElementById("venueSelect").innerHTML = '<option value="">Error loading venues</option>';
+                });
+        }
+
+        function handleHeaderClick() {
+            headerClicks++;
+            if (headerClicks === 5) {
+                headerClicks = 0;
+                const pass = prompt("Enter Administration Password:");
+                if (!pass) return;
+
+                fetch(`${BASE_WORKER_URL}/api/admin/verify`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ password: pass })
+                })
+                .then(res => {
+                    if (!res.ok) throw new Error();
+                    return res.json();
+                })
+                .then(data => {
+                    activeAdminToken = data.token;
+                    document.getElementById("lockout-page").style.display = "none";
+                    document.getElementById("admin-panel").style.display = "block";
+                })
+                .catch(() => {
+                    alert("Unauthorized Access Attempt Denied.");
+                });
+            }
+        }
+
+        function closeAdmin() {
+            document.getElementById("admin-panel").style.display = "none";
+            document.getElementById("lockout-page").style.display = "block";
+            loadVenues();
+        }
+
+        function provisionVenue() {
+            const id = document.getElementById('venueId').value.trim().toLowerCase();
+            const name = document.getElementById('venueName').value.trim();
+            const subdomain = document.getElementById('venueSubdomain').value.trim();
+            const token = document.getElementById('venueToken').value.trim();
+
+            if (!id || !name || !subdomain || !token) {
+                alert("Please fill in all parameter fields.");
+                return;
+            }
+
+            fetch(`${BASE_WORKER_URL}/api/admin/save-venue`, {
+                method: "POST",
+                headers: { 
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${activeAdminToken}`
+                },
+                body: JSON.stringify({ id, name, subdomain, token })
+            })
+            .then(res => {
+                if (!res.ok) throw new Error();
+                return res.json();
+            })
+            .then(() => {
+                alert("Success! Venue saved and Deputy webhooks fully auto-configured.");
+                document.getElementById('venueId').value = "";
+                document.getElementById('venueName').value = "";
+                document.getElementById('venueSubdomain').value = "";
+                document.getElementById('venueToken').value = "";
+            })
+            .catch(() => {
+                alert("Failed to provision venue parameters or configure Deputy webhooks.");
+            });
+        }
 
         function onYouTubeIframeAPIReady() {
             player = new YT.Player('yt-player');
         }
 
         function startBriefing() {
-            const nameInput = document.getElementById('employeeName').value.trim();
-            if (!nameInput) { 
-                alert("Please enter your name first!"); 
-                return; 
+            const firstName = document.getElementById('firstName').value.trim();
+            const lastName = document.getElementById('lastName').value.trim();
+            const mobile = document.getElementById('mobile').value.trim();
+            const venue = document.getElementById('venueSelect').value;
+
+            if (!firstName || !lastName || !mobile || !venue) {
+                alert("Please fill out all identity profile fields first!");
+                return;
             }
-            userName = nameInput;
-            
+
+            formData = { firstName, lastName, mobile, venue };
+            document.getElementById('declarantName').textContent = `${firstName} ${lastName}`;
+
             document.getElementById('lockout-page').style.display = 'none';
             document.getElementById('video-page').style.display = 'block';
-            
+
             if (player && typeof player.playVideo === 'function') {
                 player.playVideo();
             }
-            
+
             const timerDisplay = document.getElementById('seconds');
-            const timerTextContainer = document.getElementById('timer-text');
-            
             timerDisplay.textContent = timeLeft;
-            
+
             countdownInterval = setInterval(() => {
                 if (player && typeof player.getPlayerState === 'function') {
                     const state = player.getPlayerState();
-                    
                     if (state === 1) {
                         timeLeft--;
                         if (timeLeft > 0) {
                             timerDisplay.textContent = timeLeft;
                         }
                     }
-                    
                     if (state === 0 || timeLeft <= 0) {
                         clearInterval(countdownInterval);
-                        timerTextContainer.style.display = 'none';
-                        
-                        document.getElementById('token-modal').style.display = 'flex';
-                        
-                        const workerUrl = "https://deputy-safety-trapdoor.derrimutmanager.workers.dev/generate-token";
-                        
-                        fetch(workerUrl)
-                            .then(res => {
-                                if (!res.ok) throw new Error("Could not reach token database sync node.");
-                                return res.json();
-                            })
-                            .then(data => {
-                                globalToken = data.token;
-                                document.getElementById('token-display').textContent = globalToken;
-                            })
-                            .catch(err => {
-                                console.error("Database connection error:", err);
-                                document.getElementById('token-display').style.color = "#FF509F";
-                                document.getElementById('token-display').textContent = "SYNC ERROR";
-                                alert("System Sync Error: Unable to fetch security token. Please check internet access and try again.");
-                            });
+                        document.getElementById('video-page').style.display = 'none';
+                        document.getElementById('consent-modal').style.display = 'flex';
                     }
                 }
             }, 1000);
         }
 
-        function handleSecureCopyAndRedirect() {
-            if (globalToken) {
-                navigator.clipboard.writeText(globalToken)
-                    .then(() => {
-                        window.location.href = "deputy://open";
-                    })
-                    .catch((err) => {
-                        console.error("Clipboard failed: ", err);
-                        window.location.href = "deputy://open";
-                    });
+        function submitCompliance() {
+            if (!document.getElementById('consentCheck').checked) {
+                alert("You must check the box to confirm your declaration statement.");
+                return;
             }
+
+            fetch(`${BASE_WORKER_URL}/api/register-compliance`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(formData)
+            })
+            .then(res => {
+                if (!res.ok) throw new Error();
+                window.location.href = "deputy://open";
+            })
+            .catch(() => {
+                alert("Database sync failure. Ensure internet access is stable and retry.");
+            });
         }
     </script>
 </body>
