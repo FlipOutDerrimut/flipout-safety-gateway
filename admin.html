@@ -1,247 +1,273 @@
-export default {
-  async fetch(request, env, ctx) {
-    const corsHeaders = {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type, Authorization"
-    };
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Safety Trapdoor Admin Dashboard</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background-color: #0f172a; color: #f1f5f9; padding: 40px 20px; display: flex; justify-content: center; }
+    .container { width: 100%; max-width: 900px; }
+    h1, h2 { color: #ffffff; font-weight: 600; margin-bottom: 20px; }
+    h1 { font-size: 28px; border-bottom: 1px solid #334155; padding-bottom: 12px; }
+    h2 { font-size: 20px; margin-top: 10px; }
+    
+    .card { background-color: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 24px; margin-bottom: 24px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+    .hidden { display: none !important; }
+    
+    .form-group { margin-bottom: 16px; }
+    label { display: block; color: #94a3b8; margin-bottom: 6px; font-size: 14px; font-weight: 500; }
+    input { width: 100%; padding: 10px 12px; background-color: #0f172a; border: 1px solid #334155; border-radius: 6px; color: #ffffff; font-size: 14px; }
+    input:focus { outline: none; border-color: #3b82f6; }
+    
+    button { background-color: #2563eb; color: white; padding: 10px 16px; border: none; border-radius: 6px; font-weight: 500; font-size: 14px; cursor: pointer; transition: background 0.15s; }
+    button:hover { background-color: #1d4ed8; }
+    button.btn-secondary { background-color: #475569; }
+    button.btn-secondary:hover { background-color: #334155; }
+    button.btn-danger { background-color: #dc2626; }
+    button.btn-danger:hover { background-color: #b91c1c; }
+    
+    table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+    th, td { text-align: left; padding: 12px; border-bottom: 1px solid #334155; font-size: 14px; }
+    th { color: #94a3b8; font-weight: 600; background-color: #0f172a; }
+    tr:hover { background-color: #334155; }
+    
+    .badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 600; display: inline-block; }
+    .badge-success { background-color: #065f46; color: #34d399; }
+    .badge-warning { background-color: #7c2d12; color: #fb923c; }
+    
+    .actions-cell { display: flex; gap: 8px; }
+    
+    .help-tooltip { position: relative; display: inline-block; margin-left: 6px; cursor: pointer; background: #475569; color: #ffffff; border-radius: 50%; width: 18px; height: 18px; font-size: 12px; line-height: 18px; text-align: center; font-weight: bold; vertical-align: middle; }
+    .help-tooltip .tooltip-text { visibility: hidden; width: 290px; background-color: #0f172a; color: #cbd5e1; text-align: left; border: 1px solid #334155; border-radius: 6px; padding: 12px; position: absolute; z-index: 10; bottom: 125%; left: 50%; transform: translateX(-50%); opacity: 0; transition: opacity 0.2s; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5); font-weight: normal; line-height: 1.4; }
+    .help-tooltip:hover .tooltip-text { visibility: visible; opacity: 1; }
+    
+    .guide-card { background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 20px; margin-top: 24px; }
+    .guide-title { color: #ffffff; font-size: 16px; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .guide-step-list { list-style-type: none; padding: 0; margin: 0; }
+    .guide-step-item { color: #94a3b8; font-size: 14px; margin-bottom: 10px; padding-left: 24px; position: relative; }
+    .guide-step-item::before { content: "✓"; position: absolute; left: 0; color: #10b981; font-weight: bold; }
+    .code-badge { background: #2563eb; color: #ffffff; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 12px; }
+  </style>
+</head>
+<body>
 
-    if (request.method === "OPTIONS") {
-      return new Response(null, { headers: corsHeaders });
-    }
+  <div class="container">
+    <h1>Safety Trapdoor Administration</h1>
+    <br>
 
-    const url = new URL(request.url);
-    const originUrl = `${url.protocol}//${url.host}`;
+    <div id="loginSection" class="card">
+      <h2>Security Verification</h2>
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="adminPassword">Master Administration Secret Key</label>
+          <input type="password" id="adminPassword" required placeholder="Enter secret key">
+        </div>
+        <button type="submit">Verify Identity</button>
+      </form>
+    </div>
 
-    if (request.method === "GET" && url.pathname === "/api/venues") {
-      const rawConfig = await env.TOKEN_KV.get("SYS_VENUE_CONFIG");
-      const venues = rawConfig ? JSON.parse(rawConfig) : [];
-      const safeDropdownList = venues.map(v => ({ id: v.id, name: v.name, subdomain: v.subdomain, paused: !!v.paused }));
-      return new Response(JSON.stringify(safeDropdownList), {
-        status: 200,
-        headers: { ...corsHeaders, "Content-Type": "application/json" }
-      });
-    }
+    <div id="dashboardSection" class="hidden">
+      <div class="card">
+        <h2>Provision New Venue</h2>
+        <form id="venueForm">
+          <div class="form-group">
+            <label for="venueId">
+              Venue Distinct Code / ID
+              <span class="help-tooltip">?
+                <span class="tooltip-text">
+                  A unique, lowercase identification string used internally by the database mapping engine (e.g., <code>derrimut-melbourne</code>).
+                </span>
+              </span>
+            </label>
+            <input type="text" id="venueId" required placeholder="e.g. derrimut-melbourne">
+          </div>
+          <div class="form-group">
+            <label for="venueName">Display Name</label>
+            <input type="text" id="venueName" required placeholder="e.g. Derrimut Manager Melbourne">
+          </div>
+          <div class="form-group">
+            <label for="venueSubdomain">
+              Deputy Subdomain Address
+              <span class="help-tooltip">?
+                <span class="tooltip-text">
+                  The exact host prefix matching your Deputy instance (e.g., <code>companyname.au.deputy.com</code>). Don't include https://.
+                </span>
+              </span>
+            </label>
+            <input type="text" id="venueSubdomain" required placeholder="company.au.deputy.com">
+          </div>
+          <div class="form-group">
+            <label for="venueToken">
+              Permanent OAuth Access Token
+              <span class="help-tooltip">?
+                <span class="tooltip-text">
+                  <strong>How to get this token:</strong><br>
+                  1. Log into Deputy as a system administrator.<br>
+                  2. Change your browser URL suffix to: <br><span style="color:#60a5fa; font-family:monospace;">/exec/program/developer_apps</span><br>
+                  3. Click <strong>New Application</strong>.<br>
+                  4. Name it "Safety Trapdoor" and click Save.<br>
+                  5. Click <strong>Get Token</strong> next to the app to extract your permanent access key.
+                </span>
+              </span>
+            </label>
+            <input type="password" id="venueToken" required placeholder="eyJ0eXAiOiJKV1QiLCJhbGciOi...">
+          </div>
+          <button type="submit">Link & Initialize Venue</button>
+        </form>
+      </div>
 
-    if (request.method === "POST" && url.pathname === "/api/admin/verify") {
+      <div class="card">
+        <h2>Active Monitored Locations</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Venue Name</th>
+              <th>Subdomain Target</th>
+              <th>Protection Status</th>
+              <th>Administrative Control Actions</th>
+            </tr>
+          </thead>
+          <tbody id="venuesTableBody"></tbody>
+        </table>
+
+        <div class="guide-card">
+          <div class="guide-title">
+            <span style="color: #3b82f6;">➔</span> Next Steps: Webhook Verification Blueprint
+          </div>
+          <p style="color: #94a3b8; font-size: 14px; margin-bottom: 14px;">
+            While the system attempts to build webhooks programmatically, changes in Deputy security layouts can sometimes obstruct automated triggers. Use these steps to guarantee your new location is active:
+          </p>
+          <ul class="guide-step-list">
+            <li class="guide-step-item">Log directly into the newly added business profile inside <strong>Deputy</strong> using an admin account.</li>
+            <li class="guide-step-item">Navigate to <strong>Global Settings</strong> &gt; <strong>Integrations</strong> &gt; <strong>Webhooks</strong>.</li>
+            <li class="guide-step-item">Confirm that an active entry exists targeting: <span class="code-badge" id="displayWebhookUrl">https://...</span></li>
+            <li class="guide-step-item">If no webhook is present, click <strong>New Webhook</strong>, set the event topic to <span style="color:#f1f5f9; font-weight:500;">Timesheet.Insert</span>, and paste the endpoint URL above into the address target box. Save and enable it.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const baseUrl = window.location.origin;
+    let adminToken = '';
+
+    document.getElementById('displayWebhookUrl').textContent = `${baseUrl}/webhook`;
+
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const password = document.getElementById('adminPassword').value;
       try {
-        const body = await request.json();
-        if (!env.ADMIN_SECRET || !body.password || body.password.trim() !== env.ADMIN_SECRET.trim()) {
-          return new Response(JSON.stringify({ error: "Unauthorized" }), { 
-            status: 401, 
-            headers: { ...corsHeaders, "Content-Type": "application/json" } 
-          });
-        }
-        return new Response(JSON.stringify({ token: env.ADMIN_SECRET.trim() }), {
-          status: 200,
-          headers: { ...corsHeaders, "Content-Type": "application/json" }
+        const response = await fetch(`${baseUrl}/api/admin/verify`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password })
         });
-      } catch (e) {
-        return new Response(JSON.stringify({ error: "Bad Request" }), { status: 400, headers: corsHeaders });
+        if (!response.ok) throw new Error('Unauthorized deployment authorization key.');
+        const data = await response.json();
+        adminToken = data.token;
+        document.getElementById('loginSection').classList.add('hidden');
+        document.getElementById('dashboardSection').classList.remove('hidden');
+        loadVenues();
+      } catch (err) {
+        alert(err.message);
       }
-    }
+    });
 
-    const authHeader = request.headers.get("Authorization");
-    const isAdminAuthenticated = env.ADMIN_SECRET && authHeader === `Bearer ${env.ADMIN_SECRET.trim()}`;
-
-    if (request.method === "POST" && url.pathname === "/api/admin/save-venue") {
-      if (!isAdminAuthenticated) return new Response("Unauthorized", { status: 401, headers: corsHeaders });
+    async function loadVenues() {
       try {
-        const body = await request.json();
-        const { id, name, subdomain, token } = body;
+        const response = await fetch(`${baseUrl}/api/venues`);
+        const venues = await response.json();
+        const tbody = document.getElementById('venuesTableBody');
+        tbody.innerHTML = '';
+        
+        if (venues.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#64748b;">No active venues configured.</td></tr>`;
+          return;
+        }
 
-        const deputyWebhookEndpoint = `https://${subdomain}/api/v1/resource/Webhook`;
-        const targetWebhookUrl = `${originUrl}/webhook?venue=${id}`;
-
-        await fetch(deputyWebhookEndpoint, {
-          method: "POST",
-          headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
-          body: JSON.stringify({ Topic: "Timesheet.Insert", Enabled: true, Address: targetWebhookUrl })
+        venues.forEach(v => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td><strong>${v.name}</strong></td>
+            <td style="font-family:monospace; color:#cbd5e1;">${v.subdomain}</td>
+            <td>
+              <span class="badge ${v.paused ? 'badge-warning' : 'badge-success'}">
+                ${v.paused ? 'PAUSED (Bypassed)' : 'ENFORCING'}
+              </span>
+            </td>
+            <td class="actions-cell">
+              <button class="btn-secondary" onclick="togglePauseVenue('${v.id}')">${v.paused ? 'Resume' : 'Pause'}</button>
+              <button class="btn-danger" onclick="deleteVenue('${v.id}')">Delete</button>
+            </td>
+          `;
+          tbody.appendChild(row);
         });
-
-        const rawConfig = await env.TOKEN_KV.get("SYS_VENUE_CONFIG");
-        let venues = rawConfig ? JSON.parse(rawConfig) : [];
-        venues = venues.filter(v => v.id !== id);
-        venues.push({ id, name, subdomain, token, paused: false });
-
-        await env.TOKEN_KV.put("SYS_VENUE_CONFIG", JSON.stringify(venues));
-        return new Response(JSON.stringify({ status: "success" }), { status: 200, headers: corsHeaders });
       } catch (err) {
-        return new Response("Provisioning failure mapping parameters", { status: 400, headers: corsHeaders });
+        console.error('Failure retrieving configurations:', err);
       }
     }
 
-    if (request.method === "POST" && url.pathname === "/api/admin/toggle-pause-venue") {
-      if (!isAdminAuthenticated) return new Response("Unauthorized", { status: 401, headers: corsHeaders });
+    document.getElementById('venueForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const id = document.getElementById('venueId').value.trim();
+      const name = document.getElementById('venueName').value.trim();
+      const subdomain = document.getElementById('venueSubdomain').value.trim();
+      const token = document.getElementById('venueToken').value.trim();
+
       try {
-        const body = await request.json();
-        const rawConfig = await env.TOKEN_KV.get("SYS_VENUE_CONFIG");
-        let venues = rawConfig ? JSON.parse(rawConfig) : [];
-        
-        venues = venues.map(v => {
-          if (v.id === body.id) { v.paused = !v.paused; }
-          return v;
+        const response = await fetch(`${baseUrl}/api/admin/save-venue`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${adminToken}`
+          },
+          body: JSON.stringify({ id, name, subdomain, token })
         });
-
-        await env.TOKEN_KV.put("SYS_VENUE_CONFIG", JSON.stringify(venues));
-        return new Response(JSON.stringify({ status: "updated" }), { status: 200, headers: corsHeaders });
-      } catch (e) {
-        return new Response("Fault processing pause state modifications", { status: 400, headers: corsHeaders });
-      }
-    }
-
-    if (request.method === "POST" && url.pathname === "/api/admin/delete-venue") {
-      if (!isAdminAuthenticated) return new Response("Unauthorized", { status: 401, headers: corsHeaders });
-      try {
-        const body = await request.json();
-        const rawConfig = await env.TOKEN_KV.get("SYS_VENUE_CONFIG");
-        let venues = rawConfig ? JSON.parse(rawConfig) : [];
-        
-        venues = venues.filter(v => v.id !== body.id);
-
-        await env.TOKEN_KV.put("SYS_VENUE_CONFIG", JSON.stringify(venues));
-        return new Response(JSON.stringify({ status: "deleted" }), { status: 200, headers: corsHeaders });
-      } catch (e) {
-        return new Response("Fault executing registry drop command", { status: 400, headers: corsHeaders });
-      }
-    }
-
-    if (request.method === "POST" && url.pathname === "/api/register-compliance") {
-      try {
-        const body = await request.json();
-        const { firstName, lastName, mobile, venue } = body;
-        const cleanMobile = mobile.replace(/\s+/g, "");
-        const kvKey = `COMPLIANCE:${venue.trim().toLowerCase()}:${cleanMobile}`;
-        
-        await env.TOKEN_KV.put(kvKey, JSON.stringify({
-          name: `${firstName.trim()} ${lastName.trim()}`,
-          timestamp: Date.now(),
-          signed: true
-        }), { expirationTtl: 604800 });
-
-        return new Response(JSON.stringify({ status: "success" }), { status: 200, headers: corsHeaders });
+        if (!response.ok) throw new Error(await response.text());
+        document.getElementById('venueForm').reset();
+        loadVenues();
       } catch (err) {
-        return new Response("Processing signature fault", { status: 500, headers: corsHeaders });
+        alert('Provisioning failed: ' + err.message);
       }
-    }
+    });
 
-    if (request.method === "POST" && (url.pathname === "/webhook" || url.pathname === "/")) {
-      const targetVenue = url.searchParams.get("venue");
-      const callbackHeader = request.headers.get("x-deputy-webhook-callback") || "";
-      let extractedSubdomain = "";
-      
-      if (callbackHeader) {
-        try {
-          const cbUrl = new URL(callbackHeader);
-          extractedSubdomain = cbUrl.hostname.toLowerCase();
-        } catch(e) {}
-      }
-
+    async function togglePauseVenue(id) {
       try {
-        const rawConfig = await env.TOKEN_KV.get("SYS_VENUE_CONFIG");
-        const venues = rawConfig ? JSON.parse(rawConfig) : [];
-        
-        let activeVenue = venues.find(v => 
-          (targetVenue && v.id.toLowerCase() === targetVenue.toLowerCase()) ||
-          (extractedSubdomain && v.subdomain.toLowerCase() === extractedSubdomain)
-        );
-
-        if (!activeVenue && venues.length === 1) {
-          activeVenue = venues[0];
-        }
-
-        if (!activeVenue) {
-          return new Response("Venue target mapping missing", { status: 404, headers: corsHeaders });
-        }
-
-        if (activeVenue.paused) {
-          return new Response(JSON.stringify({ status: "approved", test_bypass: true }), { status: 200, headers: corsHeaders });
-        }
-
-        let payload;
-        const contentType = request.headers.get("content-type") || "";
-        
-        if (contentType.includes("x-www-form-urlencoded") || contentType.includes("form-data")) {
-          const text = await request.text();
-          const params = new URLSearchParams(text);
-          const rawPayload = params.get("payload") || params.get("data") || text;
-          try {
-            payload = JSON.parse(rawPayload);
-          } catch(e) {
-            payload = Object.fromEntries(params.entries());
-          }
-        } else {
-          payload = await request.json();
-        }
-
-        let timesheetId = null;
-        let employeeId = null;
-
-        const scanPayload = (obj) => {
-          if (!obj || typeof obj !== "object") return;
-          if (!timesheetId) timesheetId = obj.Id || obj.id || obj.TimesheetId || obj.timesheetId;
-          if (!employeeId) employeeId = obj.Employee || obj.employee || obj.EmployeeId || obj.employeeId;
-          
-          if (obj.Object) scanPayload(obj.Object);
-          if (obj.Data) scanPayload(obj.Data);
-          if (obj.data) scanPayload(obj.data);
-          if (Array.isArray(obj.data) && obj.data[0]) scanPayload(obj.data[0]);
-          if (Array.isArray(obj.Data) && obj.Data[0]) scanPayload(obj.Data[0]);
-        };
-
-        scanPayload(payload);
-
-        if (!timesheetId) {
-          return new Response("Timesheet identifier extraction failed", { status: 400, headers: corsHeaders });
-        }
-
-        let systemApproved = false;
-
-        if (employeeId) {
-          const tsResponse = await fetch(`https://${activeVenue.subdomain}/api/v1/resource/Timesheet/${timesheetId}`, {
-            method: "GET",
-            headers: { "Authorization": `Bearer ${activeVenue.token}`, "Content-Type": "application/json" }
-          });
-          const timesheetData = await tsResponse.json();
-          const freshEmployeeId = timesheetData.Employee || timesheetData.employee || employeeId;
-
-          const empResponse = await fetch(`https://${activeVenue.subdomain}/api/v1/resource/Employee/${freshEmployeeId}`, {
-            method: "GET",
-            headers: { "Authorization": `Bearer ${activeVenue.token}`, "Content-Type": "application/json" }
-          });
-
-          const employeeData = await empResponse.json();
-          const rawMobile = employeeData.Mobile || employeeData.mobile;
-
-          if (rawMobile) {
-            const cleanEmpMobile = rawMobile.replace(/\s+/g, "");
-            const complianceCheckKey = `COMPLIANCE:${activeVenue.id.toLowerCase()}:${cleanEmpMobile}`;
-            
-            if (env.DEV_BYPASS_TOKEN && cleanEmpMobile === env.DEV_BYPASS_TOKEN.trim()) {
-              systemApproved = true;
-            }
-
-            if (!systemApproved) {
-              const activeComplianceRecord = await env.TOKEN_KV.get(complianceCheckKey);
-              if (activeComplianceRecord) systemApproved = true;
-            }
-          }
-        }
-
-        if (!systemApproved) {
-          await fetch(`https://${activeVenue.subdomain}/api/v1/resource/Timesheet/${timesheetId}`, {
-            method: "DELETE",
-            headers: { "Authorization": `Bearer ${activeVenue.token}`, "Content-Type": "application/json" }
-          });
-          return new Response(JSON.stringify({ status: "deleted_unauthorized_shift" }), { status: 200, headers: corsHeaders });
-        }
-
-        return new Response(JSON.stringify({ status: "approved" }), { status: 200, headers: corsHeaders });
+        const response = await fetch(`${baseUrl}/api/admin/toggle-pause-venue`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${adminToken}`
+          },
+          body: JSON.stringify({ id })
+        });
+        if (!response.ok) throw new Error('Failed to change toggle state.');
+        loadVenues();
       } catch (err) {
-        return new Response("Internal Processing Gateway System Error", { status: 500, headers: corsHeaders });
+        alert(err.message);
       }
     }
 
-    return new Response("Router online.", { status: 200, headers: corsHeaders });
-  }
-};
+    async function deleteVenue(id) {
+      if (!confirm('Are you certain you want to remove monitoring services for this venue location layout? This will clear KV records.')) return;
+      try {
+        const response = await fetch(`${baseUrl}/api/admin/delete-venue`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${adminToken}`
+          },
+          body: JSON.stringify({ id })
+        });
+        if (!response.ok) throw new Error('Failed to destroy venue context maps.');
+        loadVenues();
+      } catch (err) {
+        alert(err.message);
+      }
+    }
+  </script>
+</body>
+</html>
