@@ -320,7 +320,7 @@
             player = new YT.Player('player', {
                 height: '100%',
                 width: '100%',
-                videoId: 'sjWH8J2XKas', 
+                videoId: '0', 
                 playerVars: {
                     'controls': 0,        
                     'disablekb': 1,      
@@ -358,7 +358,7 @@
             clockTimer = setInterval(() => {
                 if (player && typeof player.getCurrentTime === 'function') {
                     const cur = player.getCurrentTime();
-                    const dur = player.getDuration() || 243; 
+                    const dur = player.getDuration() || 368; 
                     
                     if (cur > lastLoggedTime + 2.5) {
                         player.seekTo(lastLoggedTime);
