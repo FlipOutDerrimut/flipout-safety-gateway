@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Safety Trapdoor Administration</title>
+  <title>Safety Portal - Admin Panel</title>
   <style>
     * { 
       box-sizing: border-box; 
@@ -18,46 +18,63 @@
       padding: 40px 20px; 
       min-height: 100vh;
       display: flex;
-      justify-content: center;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
     }
     
-    .container { 
+    .portal-container { 
       width: 100%; 
-      max-width: 950px; 
+      max-width: 650px; 
+      margin-top: 20px;
     }
     
-    /* Main Layout Header matching original structure */
-    h1 { 
-      font-size: 28px; 
-      color: #ffffff; 
-      font-weight: 900; 
-      text-transform: uppercase; 
-      padding-bottom: 16px;
-      border-bottom: 1px solid #2d1f4d;
+    /* Centered Main Header matching the main page format */
+    .portal-header {
+      text-align: center;
       margin-bottom: 35px;
     }
     
-    h2 { 
-      font-size: 18px; 
-      color: #a2e000; 
+    .portal-header h1 { 
+      font-size: 32px; 
+      color: #ffffff; 
       font-weight: 900; 
       text-transform: uppercase; 
-      margin-bottom: 22px; 
+      letter-spacing: -0.5px;
     }
     
-    /* Blended Brand Cards */
-    .card { 
-      background: #150e26; 
-      border: 1px solid #2d1f4d; 
-      border-radius: 8px; 
-      padding: 30px; 
+    .portal-header .tagline {
+      color: #a2e000;
+      font-size: 14px;
+      font-weight: 900;
+      text-transform: uppercase;
+      margin-top: 5px;
+      letter-spacing: 1px;
+    }
+    
+    /* The single cohesive box structure from the early layout */
+    .portal-box { 
+      background: #140e26; 
+      border: 2px solid #a2e000; 
+      border-radius: 12px; 
+      padding: 35px; 
       margin-bottom: 30px; 
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 0 25px rgba(0, 0, 0, 0.5);
     }
     
-    /* Form Inputs matching the main page exactly */
+    .portal-box h2 { 
+      font-size: 18px; 
+      color: #ffffff; 
+      font-weight: 900; 
+      text-transform: uppercase; 
+      margin-bottom: 25px;
+      border-bottom: 2px solid #2d1f4d;
+      padding-bottom: 8px;
+    }
+    
+    /* Form input styling cloned directly from the main interface */
     .form-group { 
-      margin-bottom: 20px; 
+      margin-bottom: 22px; 
     }
     
     label { 
@@ -67,32 +84,31 @@
       font-size: 13px; 
       font-weight: 900; 
       text-transform: uppercase; 
-      letter-spacing: 0.5px; 
     }
     
     input { 
       width: 100%; 
       padding: 14px 16px; 
-      background-color: #140e26; 
+      background-color: #0c0719; 
       border: 2px solid #a2e000; 
       border-radius: 8px; 
       color: #ffffff; 
       font-size: 14px; 
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      font-weight: 500;
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      font-weight: 600;
       transition: all 0.2s; 
     }
     
     input:focus { 
       outline: none; 
-      box-shadow: 0 0 12px rgba(162, 224, 0, 0.3); 
+      box-shadow: 0 0 12px rgba(162, 224, 0, 0.4); 
     }
     
     input::placeholder {
-      color: #63528a;
+      color: #4c3a75;
     }
     
-    /* Buttons Matching the Core UI */
+    /* Core Action Buttons */
     button { 
       background-color: #a2e000; 
       color: #000000; 
@@ -103,6 +119,7 @@
       font-size: 14px; 
       text-transform: uppercase; 
       cursor: pointer; 
+      width: 100%;
       transition: all 0.15s ease-in-out; 
     }
     
@@ -115,32 +132,24 @@
       transform: scale(1); 
     }
     
-    /* Administrative Control Row Action Buttons */
-    button.btn-pause { 
-      background-color: #f97316; 
-      color: #ffffff; 
-    }
-    button.btn-pause:hover { 
-      background-color: #ea580c; 
-    }
-    
-    button.btn-resume { 
-      background-color: #10b981; 
-      color: #ffffff; 
-    }
-    button.btn-resume:hover { 
-      background-color: #059669; 
+    /* Admin Row Controls styling back to its clean integration look */
+    .btn-control {
+      width: auto;
+      padding: 8px 14px;
+      font-size: 11px;
+      border-radius: 6px;
     }
     
-    button.btn-delete { 
-      background-color: #ef4444; 
-      color: #ffffff; 
-    }
-    button.btn-delete:hover { 
-      background-color: #dc2626; 
-    }
+    button.btn-pause { background-color: #f97316; color: #ffffff; }
+    button.btn-pause:hover { background-color: #ea580c; }
     
-    /* Control Table Layout */
+    button.btn-resume { background-color: #10b981; color: #ffffff; }
+    button.btn-resume:hover { background-color: #059669; }
+    
+    button.btn-delete { background-color: #ef4444; color: #ffffff; }
+    button.btn-delete:hover { background-color: #dc2626; }
+    
+    /* Unified Data Table Display */
     table { 
       width: 100%; 
       border-collapse: collapse; 
@@ -149,9 +158,9 @@
     
     th, td { 
       text-align: left; 
-      padding: 14px 18px; 
+      padding: 12px 14px; 
       border-bottom: 1px solid #2d1f4d; 
-      font-size: 14px; 
+      font-size: 13px; 
       font-family: -apple-system, BlinkMacSystemFont, sans-serif;
     }
     
@@ -160,79 +169,59 @@
       font-weight: 900; 
       background-color: #0c0719; 
       text-transform: uppercase; 
-      font-size: 12px; 
-      letter-spacing: 0.5px; 
+      font-size: 11px; 
+      letter-spacing: 0.5px;
     }
     
     tr:last-child td { 
       border-bottom: none; 
     }
     
-    tr:hover td { 
-      background-color: #1c1333; 
-    }
-    
-    /* Environment Badges */
+    /* Environment State Badges */
     .badge { 
-      padding: 4px 10px; 
-      border-radius: 6px; 
-      font-size: 12px; 
+      padding: 3px 8px; 
+      border-radius: 4px; 
+      font-size: 11px; 
       font-weight: 700; 
-      display: inline-block; 
       text-transform: uppercase;
+      display: inline-block;
     }
     
-    .badge-active { 
-      background-color: rgba(16, 185, 129, 0.15); 
-      color: #34d399; 
-      border: 1px solid rgba(16, 185, 129, 0.3); 
-    }
+    .badge-active { background-color: rgba(16, 185, 129, 0.2); color: #34d399; }
+    .badge-paused { background-color: rgba(249, 115, 22, 0.2); color: #fb923c; }
     
-    .badge-paused { 
-      background-color: rgba(249, 115, 22, 0.15); 
-      color: #fb923c; 
-      border: 1px solid rgba(249, 115, 22, 0.3); 
-    }
-    
-    .actions-container { 
+    .actions-cell { 
       display: flex; 
-      gap: 10px; 
+      gap: 6px; 
     }
     
-    /* Integrated Documentation Boxes */
-    .guide-box { 
+    /* Native Inline Integration Walkthrough Box */
+    .guide-panel { 
       background-color: #0c0719; 
       border: 1px solid #2d1f4d;
       border-radius: 8px; 
-      padding: 20px; 
-      margin-top: 20px; 
+      padding: 18px; 
+      margin-top: 22px; 
     }
     
-    .guide-box strong {
+    .guide-panel strong {
       color: #a2e000;
       text-transform: uppercase;
-      font-size: 13px;
+      font-size: 12px;
       display: block;
       margin-bottom: 8px;
     }
     
-    .guide-box ol { 
-      padding-left: 20px; 
+    .guide-panel ol { 
+      padding-left: 18px; 
     }
     
-    .guide-box li { 
-      margin-bottom: 8px; 
-      line-height: 1.6; 
+    .guide-panel li { 
+      margin-bottom: 6px; 
+      line-height: 1.5; 
       color: #cbd5e1; 
-      font-size: 14px; 
+      font-size: 13px; 
       font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-    }
-    
-    .guide-box li strong {
-      display: inline;
-      color: #ffffff;
-      text-transform: none;
-      font-size: 14px;
     }
     
     .code-tag { 
@@ -241,26 +230,29 @@
       padding: 2px 6px; 
       border-radius: 4px; 
       font-family: monospace; 
-      font-size: 13px; 
-      font-weight: 600; 
+      font-size: 12px; 
     }
   </style>
 </head>
 <body>
 
-  <div class="container">
-    <h1>Safety Trapdoor Administration</h1>
+  <div class="portal-container">
+    
+    <div class="portal-header">
+      <h1>Safety Trapdoor</h1>
+      <div class="tagline">System Configuration Portal</div>
+    </div>
 
-    <div class="card">
-      <h2>Master Authorisation Credentials</h2>
+    <div class="portal-box">
+      <h2>System Access</h2>
       <div class="form-group">
         <label for="adminPassword">Master System Secret Key</label>
-        <input type="password" id="adminPassword" placeholder="Enter secure authentication key to unlock system changes">
+        <input type="password" id="adminPassword" placeholder="Enter security key to confirm modifications">
       </div>
     </div>
 
-    <div class="card">
-      <h2>Initialise New Venue Location</h2>
+    <div class="portal-box">
+      <h2>Initialise Venue Location</h2>
       <form id="venueForm">
         <div class="form-group">
           <label for="venueId">Venue Custom Code / ID</label>
@@ -276,43 +268,43 @@
         </div>
         <div class="form-group">
           <label for="venueToken">Permanent OAuth Access Token</label>
-          <input type="password" id="venueToken" required placeholder="Paste permanent application access token string">
+          <input type="password" id="venueToken" required placeholder="Paste token generated by your target application configuration">
         </div>
         
-        <div class="guide-box">
-          <strong>Steps to locate your Access Token natively inside the Deputy interface:</strong>
+        <div class="guide-panel">
+          <strong>Steps to generate your token natively inside Deputy:</strong>
           <ol>
-            <li>Log into your primary <strong>Deputy Administrator</strong> account.</li>
-            <li>Click your <strong>Profile Initials / Avatar</strong> in the top right corner of the screen.</li>
-            <li>Select <strong>System Settings</strong> from the dropdown menu selections.</li>
-            <li>Click on <strong>Integrations</strong> located within the left-hand sidebar workspace panel.</li>
-            <li>Select the <strong>Developer Applications</strong> option grid.</li>
-            <li>Click <strong>New Application</strong>, define a name (such as <code>Safety Trapdoor</code>), and click Save to retrieve your permanent access token string.</li>
+            <li>Open your <strong>Deputy Administrator</strong> profile dashboard.</li>
+            <li>Click your <strong>Profile Icon or Initials</strong> located at the top-right corner.</li>
+            <li>Select <strong>System Settings</strong> from the available drop-down links.</li>
+            <li>Click on <strong>Integrations</strong> within the left-hand navigation sidebar panel.</li>
+            <li>Open the <strong>Developer Applications</strong> management pane.</li>
+            <li>Click <strong>New Application</strong>, choose a reference name (e.g., <code>Safety Trapdoor</code>), and save to extract the key.</li>
           </ol>
         </div>
         <br>
-        <button type="submit">Initialise & Register Venue</button>
+        <button type="submit">Register and Initialise Venue</button>
       </form>
     </div>
 
-    <div class="card">
-      <h2>Active Monitored Environments</h2>
+    <div class="portal-box">
+      <h2>Monitored Environments</h2>
       <table>
         <thead>
           <tr>
-            <th>Venue Location Name</th>
-            <th>Deputy Subdomain Target</th>
-            <th>Protection Status</th>
-            <th>Administrative Actions</th>
+            <th>Venue Name</th>
+            <th>Subdomain Destination</th>
+            <th>Status</th>
+            <th>Controls</th>
           </tr>
         </thead>
         <tbody id="venuesTableBody"></tbody>
       </table>
 
-      <div class="guide-box" style="margin-top: 32px;">
-        <strong>Manual Webhook Fallback Steps:</strong>
-        <p style="font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-size: 14px; color: #cbd5e1; line-height: 1.6; margin-top: 4px;">
-          If automated synchronisation is restricted by your system profile rules, confirm the hook definition manually within Deputy under <strong>System Settings</strong> > <strong>Integrations</strong> > <strong>Webhooks</strong>. Verify an active webhook maps the <span class="code-tag">Timesheet.Insert</span> event trigger directly to: <span class="code-tag" id="displayWebhookUrl">https://.../webhook</span>
+      <div class="guide-panel" style="margin-top: 25px;">
+        <strong>Manual Synchronisation Fallback Profile:</strong>
+        <p style="font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-size: 13px; color: #cbd5e1; line-height: 1.5; margin-top: 4px;">
+          If automation is blocked by permission rules, go to <strong>System Settings</strong> > <strong>Integrations</strong> > <strong>Webhooks</strong> inside Deputy and bind a <span class="code-tag">Timesheet.Insert</span> trigger event pointing directly to: <span class="code-tag" id="displayWebhookUrl">https://.../webhook</span>
         </p>
       </div>
     </div>
@@ -321,7 +313,6 @@
 
   <script>
     const baseUrl = window.location.origin;
-
     document.getElementById('displayWebhookUrl').textContent = `${baseUrl}/webhook`;
 
     async function loadVenues() {
@@ -332,7 +323,7 @@
         tbody.innerHTML = '';
         
         if (venues.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#63528a; padding: 24px; font-family: -apple-system, BlinkMacSystemFont, sans-serif;">No active monitored franchise locations found.</td></tr>`;
+          tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#4c3a75; padding: 20px; font-family: -apple-system, BlinkMacSystemFont, sans-serif;">No active monitored environments registered.</td></tr>`;
           return;
         }
 
@@ -340,21 +331,21 @@
           const row = document.createElement('tr');
           
           const statusBadge = v.paused 
-            ? `<span class="badge badge-paused">Bypassed (Paused)</span>` 
-            : `<span class="badge badge-active">Active & Enforcing</span>`;
+            ? `<span class="badge badge-paused">Paused</span>` 
+            : `<span class="badge badge-active">Enforcing</span>`;
             
           const pauseButton = v.paused 
-            ? `<button class="btn-resume" onclick="togglePauseVenue('${v.id}')">Resume</button>` 
-            : `<button class="btn-pause" onclick="togglePauseVenue('${v.id}')">Pause</button>`;
+            ? `<button class="btn-control btn-resume" onclick="togglePauseVenue('${v.id}')">Resume</button>` 
+            : `<button class="btn-control btn-pause" onclick="togglePauseVenue('${v.id}')">Pause</button>`;
 
           row.innerHTML = `
             <td><strong style="color: #ffffff; font-family: -apple-system, BlinkMacSystemFont, sans-serif;">${v.name}</strong></td>
             <td style="font-family: monospace; color: #cbd5e1;">${v.subdomain}</td>
             <td>${statusBadge}</td>
             <td>
-              <div class="actions-container">
+              <div class="actions-cell">
                 ${pauseButton}
-                <button class="btn-delete" onclick="deleteVenue('${v.id}')">Delete</button>
+                <button class="btn-control btn-delete" onclick="deleteVenue('${v.id}')">Delete</button>
               </div>
             </td>
           `;
@@ -391,7 +382,7 @@
         document.getElementById('venueForm').reset();
         loadVenues();
       } catch (err) {
-        alert('Provisioning layout failed: ' + err.message);
+        alert('Provisioning configuration failed: ' + err.message);
       }
     });
 
@@ -411,7 +402,7 @@
           },
           body: JSON.stringify({ id })
         });
-        if (!response.ok) throw new Error('Failed to change venue enforcement state.');
+        if (!response.ok) throw new Error('Failed to update venue operational status.');
         loadVenues();
       } catch (err) {
         alert(err.message);
@@ -421,11 +412,11 @@
     async function deleteVenue(id) {
       const adminSecret = document.getElementById('adminPassword').value.trim();
       if (!adminSecret) {
-        alert('Please provide your Master System Secret Key to perform deletion actions.');
+        alert('Please provide your Master System Secret Key to execute data removal.');
         return;
       }
 
-      if (!confirm('Are you completely sure you want to remove this venue mapping configuration? Active monitoring will stop immediately.')) return;
+      if (!confirm('Are you certain you want to remove this venue integration map? Monitoring checks will instantly terminate.')) return;
       
       try {
         const response = await fetch(`${baseUrl}/api/admin/delete-venue`, {
@@ -436,14 +427,14 @@
           },
           body: JSON.stringify({ id })
         });
-        if (!response.ok) throw new Error('Failed to destroy active venue registration mapping fields.');
+        if (!response.ok) throw new Error('Failed to clear active venue layout properties.');
         loadVenues();
       } catch (err) {
         alert(err.message);
       }
     }
 
-    // Run active venue environment scan immediately upon initialisation
+    // Immediately fetch initialised tracking state arrays
     loadVenues();
   </script>
 </body>
