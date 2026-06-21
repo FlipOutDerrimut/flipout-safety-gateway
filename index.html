@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Safety Briefing | Flip Out</title>
+    <title>Flip Out Safety Guidelines</title>
     <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;800&display=swap" rel="stylesheet">
     <style>
         body { 
@@ -245,7 +245,7 @@
         <div class="video-container">
             <div id="player"></div>
         </div>
-        <div id="timer-text">Safety Sync Remaining: <span id="timer-clock">00:00</span></div>
+        <div id="timer-text">Time Remaining: <span id="timer-clock">00:00</span></div>
     </div>
 
     <div id="token-modal">
@@ -289,7 +289,7 @@
         });
 
         function showPhoneHint() {
-            alert("💡 IMPORTANT:\n\nYour mobile number must match EXACTLY to how it is written in your Deputy employee profile (including any country codes like +61 if applicable), otherwise the gateway will not recognize your completion status and will deny your clock-in.");
+            alert("💡 IMPORTANT:\n\nYour mobile number must match EXACTLY to how it is written in your Deputy employee profile (including any country codes like +61 if applicable), otherwise the gateway will not recognise your completion status and will deny your clock-in.");
         }
 
         function triggerAdminAccess() {
@@ -342,7 +342,7 @@
             const ph = document.getElementById('mobileNumber').value.trim();
 
             if (!v || !fn || !ln || !ph) {
-                alert("Please fill out all identity verification metrics to initialize.");
+                alert("Please fill out all identity verification metrics to initialise.");
                 return;
             }
 
@@ -392,7 +392,7 @@
 
             const btn = document.getElementById('lockInBtn');
             btn.disabled = true;
-            btn.textContent = "SYNCHRONIZING WITH DEPUTY...";
+            btn.textContent = "SYNCHRONISING WITH DEPUTY...";
 
             const payload = {
                 firstName: document.getElementById('firstName').value.trim(),
