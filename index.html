@@ -683,6 +683,369 @@
             player = new YT.Player('player', {
                 height: '100%',
                 width: '100%',
+                videoId: 'sjWH8J2XKas', 
+                playerVars: {
+                    'controls': 0,        
+                    'disablekb': 1,      
+                    'rel': 0,             
+                    'modestbranding': 1,
+                    'playsinline': 1
+                },
+                events: {
+                    'onReady': (e) => { },
+                    'onStateChange': handlePlayerStateChange
+                }
+            });
+        }
+
+        function startBriefing() {
+            const v = document.getElementById('venueSelect').value;
+            const fn = document.getElementById('firstName').value.trim();
+            const ln = document.getElementById('lastName').value.trim();
+            const ph = document.getElementById('mobileNumber').value.trim();
+
+            if (!v || !fn || !ln || !ph) {
+                alert("Please fill out all identity verification metrics to initialise.");
+                return;
+            }
+
+            document.getElementById('dynamicDeclarationText').textContent = `I, ${fn} ${ln}, solemnly declare that I have watched the mandatory weekly workplace safety briefing video in its entirety. I understand and completely consent that this digital validation tracks my compliance signature for exactly 7 days, and that falsifying this record will result disciplinary action.`;
+
+            document.getElementById('lockout-page').style.display = 'none';
+            document.getElementById('video-page').style.display = 'block';
+            
+            if (player && typeof player.playVideo === 'function') {
+                player.playVideo();
+            }
+
+            clockTimer = setInterval(() => {
+                if (player && typeof player.getCurrentTime === 'function') {
+                    const cur = player.getCurrentTime();
+                    const dur = player.getDuration() || 243; 
+                    
+                    if (cur > lastLoggedTime + 2.5) {
+                        player.seekTo(lastLoggedTime);
+                    } else {
+                        lastLoggedTime = cur;
+                    }
+
+                    const remaining = Math.max(0, Math.floor(dur - cur));
+                    const mins = Math.floor(remaining / 60);
+                    let secs = remaining % 60;
+                    if(secs < 10) secs = "0" + secs;
+                    
+                    document.getElementById('timer-clock').textContent = `${mins}:${secs}`;
+                }
+            }, 500);
+        }
+
+        function handlePlayerStateChange(event) {
+            if (event.data === YT.PlayerState.ENDED) {
+                clearInterval(clockTimer);
+                document.getElementById('video-page').style.display = 'none';
+                document.getElementById('token-modal').style.display = 'flex';
+            }
+        }
+
+        function submitComplianceSignature() {
+            if (!document.getElementById('consentCheckbox').checked) {
+                alert("You must check the box to acknowledge and sign the compliance declaration.");
+                return;
+            }
+
+            const btn = document.getElementById('lockInBtn');
+            btn.disabled = true;
+            btn.textContent = "SYNCHRONISING WITH DEPUTY...";
+
+            const payload = {
+                firstName: document.getElementById('firstName').value.trim(),
+                lastName: document.getElementById('lastName').value.trim(),
+                mobile: document.getElementById('mobileNumber').value.trim(),
+                venue: document.getElementById('venueSelect').value
+            };
+
+            fetch(`${BACKEND_URL}/api/register-compliance`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.status === "success") {
+                    alert("✅ Security Token Generated Successfully!\n\nYour profile has been cleared. You can now open Deputy and log straight into your shift normally.");
+                    window.location.href = "deputy://open";
+                } else {
+                    throw new Error("Handshake rejection.");
+                }
+            })
+            .catch(err => {
+                alert("Network communication issue. Please request management verification.");
+                btn.disabled = false;
+                btn.textContent = "🔒 LOCK IN REGISTRATION";
+            });
+        }
+    </script>
+</body>
+</html>
+        }
+        .help-bubble {
+            background: #FF509F;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-left: 10px;
+            user-select: none;
+            flex-shrink: 0;
+            transition: transform 0.2s;
+        }
+        .help-bubble:hover { transform: scale(1.1); }
+        
+        .video-container { 
+            width: 100%; 
+            max-width: 640px; 
+            margin: 0 auto 20px auto; 
+            border: 4px solid #FF509F; 
+            border-radius: 8px; 
+            background: #000; 
+            overflow: hidden;
+            aspect-ratio: 16/9;
+        }
+        #timer-text { color: #FF509F; font-size: 1.1rem; margin-top: 15px; font-weight: 700; }
+        #timer-clock { color: #99C63E; font-family: monospace; font-size: 1.3rem; }
+        
+        .btn { 
+            padding: 16px 32px; 
+            background-color: #99C63E; 
+            color: #0F041D; 
+            font-weight: 800; 
+            text-decoration: none; 
+            border-radius: 8px; 
+            display: inline-block; 
+            margin-top: 15px; 
+            cursor: pointer; 
+            border: none; 
+            font-family: inherit;
+            font-size: 1rem;
+            width: 100%;
+            box-shadow: 0 4px 10px rgba(153, 198, 62, 0.3);
+        }
+        
+        #token-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 4, 29, 0.98); 
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .modal-content {
+            background: #1a0a30;
+            border: 4px solid #FF509F; 
+            padding: 30px 20px;
+            border-radius: 12px;
+            text-align: center;
+            width: 100%;
+            max-width: 480px;
+            box-shadow: 0 0 25px rgba(255, 80, 159, 0.4);
+        }
+        
+        .declaration-box {
+            background: #0f041d;
+            border: 1px solid #FF509F;
+            padding: 15px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            line-height: 1.4;
+            text-align: left;
+            color: #e0e0e0;
+            margin: 15px 0;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+        .declaration-title {
+            color: #99C63E;
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+        }
+        .checkbox-container {
+            display: flex;
+            align-items: flex-start;
+            text-align: left;
+            font-size: 0.8rem;
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+        .checkbox-container input {
+            width: auto;
+            margin-right: 10px;
+            margin-top: 3px;
+            transform: scale(1.2);
+        }
+
+        .portrait-graphic {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            pointer-events: none;
+            opacity: 0.85;
+        }
+        
+        @media (orientation: portrait) and (min-height: 700px) {
+            .portrait-graphic.char-left {
+                display: block;
+                width: 140px;
+                bottom: 20px;
+                left: -10px;
+            }
+            .portrait-graphic.char-right {
+                display: block;
+                width: 130px;
+                bottom: 30px;
+                right: -10px;
+            }
+            body { justify-content: center; }
+        }
+        
+        @media (orientation: landscape) {
+            .portrait-graphic {
+                display: none !important;
+            }
+            .logo-container { max-width: 140px; margin: 5px auto; }
+            body { padding: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="logo-container">
+        <img src="FO Primary Logo.png" alt="Flip Out Logo">
+    </div>
+
+    <img src="14.png" class="portrait-graphic char-left" alt="Ninja Left">
+    <img src="Roo pose 1.png" class="portrait-graphic char-right" alt="Ninja Right">
+
+    <div id="lockout-page">
+        <h1 onclick="triggerAdminAccess()">FLIP OUT SAFETY GUIDELINES</h1>
+        
+        <div class="form-group">
+            <label for="venueSelect">SELECT YOUR VENUE</label>
+            <select id="venueSelect">
+                <option value="">Loading active locations...</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="firstName">FIRST NAME</label>
+            <input type="text" id="firstName" placeholder="As seen on Deputy...">
+        </div>
+
+        <div class="form-group">
+            <label for="lastName">LAST NAME</label>
+            <input type="text" id="lastName" placeholder="As seen on Deputy...">
+        </div>
+
+        <div class="form-group">
+            <label for="mobileNumber">MOBILE PHONE NUMBER</label>
+            <div class="phone-container">
+                <input type="tel" id="mobileNumber" placeholder="e.g. 0412345678">
+                <div class="help-bubble" onclick="showPhoneHint()">?</div>
+            </div>
+        </div>
+        
+        <button class="btn" onclick="startBriefing()">START SAFETY BRIEFING</button>
+    </div>
+
+    <div id="video-page">
+        <div class="video-container">
+            <div id="player"></div>
+        </div>
+        <div id="timer-text">Time Remaining: <span id="timer-clock">00:00</span></div>
+    </div>
+
+    <div id="token-modal">
+        <div class="modal-content">
+            <h2 style="color: #FFFFFF; margin: 0; font-size: 1.3rem; color:#99C63E;">COMPLIANCE VERIFICATION</h2>
+            
+            <div class="declaration-box">
+                <div class="declaration-title">Declaration</div>
+                <span id="dynamicDeclarationText">I, [Workers Name], solemnly declare that I have watched the mandatory weekly workplace safety briefing video in its entirety. I understand and completely consent that this digital validation tracks my compliance signature for exactly 7 days, and that falsifying this record will result disciplinary action.</span>
+            </div>
+
+            <label class="checkbox-container">
+                <input type="checkbox" id="consentCheckbox">
+                <span>I confirm my digital signature matches this statement and understand the deployment rules.</span>
+            </label>
+
+            <button class="btn" id="lockInBtn" onclick="submitComplianceSignature()">🔒 LOCK IN REGISTRATION</button>
+        </div>
+    </div>
+
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script>
+        const BACKEND_URL = "https://deputy-safety-trapdoor.derrimutmanager.workers.dev"; 
+        let player;
+        let clockTimer;
+        let clicks = 0;
+        let lastLoggedTime = 0;
+
+        window.addEventListener('DOMContentLoaded', () => {
+            fetch(`${BACKEND_URL}/api/venues`)
+                .then(r => r.json())
+                .then(data => {
+                    const select = document.getElementById('venueSelect');
+                    select.innerHTML = '<option value="">-- Choose Venue --</option>';
+                    data.forEach(v => {
+                        select.innerHTML += `<option value="${v.id}">${v.name}</option>`;
+                    });
+                }).catch(err => {
+                    document.getElementById('venueSelect').innerHTML = '<option value="">Error connecting to network</option>';
+                });
+        });
+
+        function showPhoneHint() {
+            alert("💡 IMPORTANT:\n\nYour mobile number must match EXACTLY to how it is written in your Deputy employee profile (including any country codes like +61 if applicable), otherwise the gateway will not recognise your completion status and will deny your clock-in.");
+        }
+
+        function triggerAdminAccess() {
+            clicks++;
+            if (clicks >= 5) {
+                clicks = 0;
+                const pw = prompt("Enter administrative clearance secret:");
+                if (pw) {
+                    fetch(`${BACKEND_URL}/api/admin/verify`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ password: pw })
+                    })
+                    .then(res => {
+                        if(res.status === 401) throw new Error("Invalid password credentials.");
+                        return res.json();
+                    })
+                    .then(data => {
+                        localStorage.setItem('admin_token', data.token);
+                        window.location.href = 'admin.html';
+                    })
+                    .catch(err => alert(err.message));
+                }
+            }
+        }
+
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('player', {
+                height: '100%',
+                width: '100%',
                 videoId: 'fmnQdC7i5Dk', 
                 playerVars: {
                     'controls': 0,        
