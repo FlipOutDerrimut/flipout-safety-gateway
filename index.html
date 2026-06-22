@@ -320,7 +320,7 @@
             player = new YT.Player('player', {
                 height: '100%',
                 width: '100%',
-                videoId: 'sjWH8J2XKas', 
+                videoId: 'fmnQdC7i5Dk', 
                 playerVars: {
                     'controls': 0,        
                     'disablekb': 1,      
@@ -355,25 +355,28 @@
                 player.playVideo();
             }
 
-            clockTimer = setInterval(() => {
-                if (player && typeof player.getCurrentTime === 'function') {
-                    const cur = player.getCurrentTime();
-                    const dur = player.getDuration() || 243; 
-                    
-                    if (cur > lastLoggedTime + 2.5) {
-                        player.seekTo(lastLoggedTime);
-                    } else {
-                        lastLoggedTime = cur;
-                    }
+clockTimer = setInterval(() => {
+    if (player && typeof player.getCurrentTime === 'function') {
+        const cur = player.getCurrentTime();
+        let dur = player.getDuration();
+        if (!dur || dur === 0) {
+            dur = 368;
+        }
+        
+        if (cur > lastLoggedTime + 2.5) {
+            player.seekTo(lastLoggedTime);
+        } else {
+            lastLoggedTime = cur;
+        }
 
-                    const remaining = Math.max(0, Math.floor(dur - cur));
-                    const mins = Math.floor(remaining / 60);
-                    let secs = remaining % 60;
-                    if(secs < 10) secs = "0" + secs;
-                    
-                    document.getElementById('timer-clock').textContent = `${mins}:${secs}`;
-                }
-            }, 500);
+        const remaining = Math.max(0, Math.floor(dur - cur));
+        const mins = Math.floor(remaining / 60);
+        let secs = remaining % 60;
+        if(secs < 10) secs = "0" + secs;
+        
+        document.getElementById('timer-clock').textContent = `${mins}:${secs}`;
+    }
+}, 500);
         }
 
         function handlePlayerStateChange(event) {
